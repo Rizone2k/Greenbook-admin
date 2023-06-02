@@ -1,0 +1,25 @@
+stages:
+- build
+- deploy
+- migrate
+
+build-job-dev:
+  stage: build
+  tags:
+  - $GITLAB_RUNNER_DEV
+  script:
+  - pwd; whoami; 
+  - echo "Building Docker image..."
+  - docker build -t $APP_NAME_DEV:${CI_COMMIT_SHA:0:6} .
+  only:
+  - develop
+
+deploy-job-dev:
+  stage: deploy
+  tags:
+  - $GITLAB_RUNNER_DEV
+  script:
+  - echo "Deploying..."
+  - cd /home/ubuntu; sed -i "s|$APP_NAME_DEV:\w\{6\}|$APP_NAME_DEV:${CI_COMMIT_SHA:0:6}|g" docker-compose.yml; docker compose up -d
+  only:
+  - develop
