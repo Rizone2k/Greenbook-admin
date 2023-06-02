@@ -160,7 +160,7 @@ export function DashboardNavbar() {
             size="sm"
             className="cursor-pointer"
             onClick={() => alert("Coming soon!")}
-            src="../../public/img/bruce-mars.jpeg"
+            src="/img/bruce-mars.jpeg"
             alt="avatar"
             variant="circular"
           />
