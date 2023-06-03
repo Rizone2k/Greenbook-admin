@@ -22,7 +22,6 @@ const booksSlice = createSlice({
 export const getBooks = createAsyncThunk(
   "books/getBooks",
   async ({ limit = "20", page = "1" }) => {
-    console.log({ limit, page });
     try {
       const res = await greenBookAPI.getBooks(limit, page);
       if (res.status === 200) {

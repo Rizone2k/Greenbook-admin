@@ -73,6 +73,18 @@ const greenBookAPI = {
   },
 
   // ~~~~~~~~~~~~~~User~~~~~~~~~~~~~~~~//
+  getUsersAcc: (limit = "10", page = "1") => {
+    const query = {
+      ...(limit && { rowPerPage: limit }),
+      ...(page && page !== "0" && { pageNumber: page }),
+    };
+    const url = `users/?${queryString.stringify({
+      ...query,
+    })}`;
+    console.log(instance.get(url));
+    return instance.get(url);
+  },
+
   changPassword: (oldPassword = "", newPassword = "") => {
     const query = {
       ...(oldPassword && { oldPassword }),
@@ -82,6 +94,17 @@ const greenBookAPI = {
       ...query,
     })}`;
     return instance.post(url);
+  },
+
+  // ~~~~~~~~~~~~~~Discount~~~~~~~~~~~~~~~~//
+  getCoupons: () => {
+    const url = `/discount`;
+    return instance.get(url);
+  },
+  // ~~~~~~~~~~~~~~Order~~~~~~~~~~~~~~~~//
+  getOrders: () => {
+    const url = `/order`;
+    return instance.get(url);
   },
 };
 

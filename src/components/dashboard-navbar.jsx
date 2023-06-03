@@ -60,7 +60,14 @@ export function DashboardNavbar() {
           </div>
         </div>
         <div className="flex items-center">
-          <div className="mr-auto md:mr-4 md:w-56"></div>
+          <IconButton
+            variant="text"
+            color="blue-gray"
+            className="grid xl:hidden"
+            onClick={() => setOpenSidenav(dispatch, !openSidenav)}
+          >
+            <Bars3Icon strokeWidth={3} className="h-6 w-6 text-white" />
+          </IconButton>
 
           <IconButton
             variant="text"
@@ -160,7 +167,7 @@ export function DashboardNavbar() {
             size="sm"
             className="cursor-pointer"
             onClick={() => alert("Coming soon!")}
-            src="../../public/img/bruce-mars.jpeg"
+            src="/img/bruce-mars.jpeg"
             alt="avatar"
             variant="circular"
           />

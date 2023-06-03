@@ -13,8 +13,10 @@ import { authorsSelector } from "@/redux/selectors";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { FaSearch } from "react-icons/fa";
+import { FaPencilAlt, FaSearch, FaTrashAlt } from "react-icons/fa";
 import { getAuthors } from "@/redux/reducers/authors";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 export function Authors() {
   const [page, setPage] = useState(1);
@@ -67,7 +69,7 @@ export function Authors() {
           <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
             <input
               type="text"
-              placeholder="Find book"
+              placeholder="Tìm kiếm..."
               className=" w-3/4 bg-transparent px-2 text-base font-normal text-white"
               name="search"
               id="search"
@@ -82,14 +84,15 @@ export function Authors() {
             <thead>
               <tr>
                 {[
-                  "Tên tasc giả",
+                  "Tên tác giả",
                   "Ngày tạo",
                   "is deleted",
                   "Ngày cập nhật",
                   "",
-                ].map((el) => (
+                  "",
+                ].map((el, index) => (
                   <th
-                    key={el}
+                    key={index}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
                   >
                     <Typography
@@ -156,13 +159,32 @@ export function Authors() {
                         </Typography>
                       </td>
                       <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
-                        >
-                          Edit
-                        </Typography>
+                        <Tippy content="Edit">
+                          <span>
+                            <Typography
+                              variant="small"
+                              as="a"
+                              href="#"
+                              className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+                            >
+                              <FaPencilAlt></FaPencilAlt>
+                            </Typography>
+                          </span>
+                        </Tippy>
+                      </td>
+                      <td className={className} onClick={() => alert(book.id)}>
+                        <Tippy content="Delete">
+                          <span>
+                            <Typography
+                              variant="small"
+                              as="a"
+                              href="#"
+                              className="flex items-center justify-center text-xs font-semibold text-red-400"
+                            >
+                              <FaTrashAlt></FaTrashAlt>
+                            </Typography>
+                          </span>
+                        </Tippy>
                       </td>
                     </tr>
                   );

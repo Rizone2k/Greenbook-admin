@@ -9,19 +9,19 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { authorsSelector } from "@/redux/selectors";
+import { genresSelector } from "@/redux/selectors";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { FaSearch } from "react-icons/fa";
-import { getAuthors } from "@/redux/reducers/authors";
+import { getGenres } from "@/redux/reducers/genres";
 
 export function Genres() {
   const [page, setPage] = useState(1);
-  const authors = useSelector(authorsSelector);
+  const genres = useSelector(genresSelector);
   const dispatch = useDispatch();
 
-  console.log(authors);
+  console.log(genres);
 
   const getItemProps = (index) => ({
     variant: page === index ? "filled" : "text",
@@ -44,7 +44,7 @@ export function Genres() {
   useEffect(() => {
     const getListBook = () => {
       let row = "20";
-      dispatch(getAuthors({ limit: row, page: page }))
+      dispatch(getGenres({ limit: row, page: page }))
         .then(unwrapResult)
         .catch((err) => {
           console.log(err);
@@ -67,7 +67,7 @@ export function Genres() {
           <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
             <input
               type="text"
-              placeholder="Find book"
+              placeholder="Tìm kiếm..."
               className=" w-3/4 bg-transparent px-2 text-base font-normal text-white"
               name="search"
               id="search"
@@ -82,7 +82,7 @@ export function Genres() {
             <thead>
               <tr>
                 {[
-                  "Tên tasc giả",
+                  "Tên thể loại",
                   "Ngày tạo",
                   "is deleted",
                   "Ngày cập nhật",
@@ -103,56 +103,49 @@ export function Genres() {
               </tr>
             </thead>
             <tbody>
-              {authors &&
-                authors.map((author, key) => {
+              {genres &&
+                genres.map((genre, key) => {
                   const className = `py-3 px-5 ${
-                    key === authors.length - 1
+                    key === genres.length - 1
                       ? ""
                       : "border-b border-blue-gray-50"
                   }`;
 
                   return (
-                    <tr key={author.id}>
+                    <tr key={genre.id}>
                       <td className={className}>
                         <div className="flex items-center gap-4">
-                          {author?.images && (
-                            <Avatar
-                              src={author?.images ?? ""}
-                              alt={author.name}
-                              size="sm"
-                            />
-                          )}
                           <div>
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-semibold"
                             >
-                              {author.name}
+                              {genre.name}
                             </Typography>
                           </div>
                         </div>
                       </td>
                       <td className={className}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {author?.created_at ?? ""}
+                          {genre?.created_at ?? ""}
                         </Typography>
                       </td>
                       <td className={className}>
                         <Chip
                           variant="gradient"
                           color={
-                            author.is_deleted && author.is_deleted == false
+                            genre.is_deleted && genre.is_deleted == false
                               ? "red"
                               : "green"
                           }
-                          value={JSON.stringify(author.is_deleted)}
+                          value={JSON.stringify(genre.is_deleted)}
                           className="py-0.5 px-2 text-[11px] font-medium"
                         />
                       </td>
                       <td className={className}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {author.updated_at}
+                          {genre.updated_at}
                         </Typography>
                       </td>
                       <td className={className}>
