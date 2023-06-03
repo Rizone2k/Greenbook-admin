@@ -6,6 +6,7 @@ import genresSlice from "./reducers/genres.js";
 import couponsSlice from "./reducers/coupons.js";
 import ordersSlice from "./reducers/orders.js";
 import usersSlice from "./reducers/users.js";
+import publishersSlice from "./reducers/publisher.js";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     coupons: couponsSlice.reducer,
     orders: ordersSlice.reducer,
     users: usersSlice.reducer,
+    publishers: publishersSlice.reducer,
   },
 });
 

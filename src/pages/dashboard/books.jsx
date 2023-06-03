@@ -9,8 +9,8 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { booksSelector } from "@/redux/selectors";
-import { getBooks } from "@/redux/reducers/books";
+import { booksSelector, currentUserSelector } from "@/redux/selectors";
+import { getBooks, getBooksOfPublisher } from "@/redux/reducers/books";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
@@ -21,6 +21,7 @@ import "tippy.js/dist/tippy.css";
 export function Books() {
   const [page, setPage] = useState(1);
   const books = useSelector(booksSelector);
+  const currentUser = useSelector(currentUserSelector);
   const dispatch = useDispatch();
 
   const getItemProps = (index) => ({
@@ -44,7 +45,12 @@ export function Books() {
   useEffect(() => {
     const getListBook = () => {
       let row = "20";
-      dispatch(getBooks({ limit: row, page: page }))
+
+      dispatch(
+        currentUser.roles.some((role) => role.includes("publisher"))
+          ? getBooksOfPublisher({ id: currentUser.id_user })
+          : getBooks({ limit: row, page: page })
+      )
         .then(unwrapResult)
         .catch((err) => {
           console.log(err);

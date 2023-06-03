@@ -26,11 +26,16 @@ import {
   setOpenConfigurator,
   setOpenSidenav,
 } from "@/context";
+import { useSelector } from "react-redux";
+import { currentUserSelector } from "@/redux/selectors";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
   const { pathname } = useLocation();
+  const currentUser = useSelector(currentUserSelector);
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
 
   return (
@@ -94,7 +99,11 @@ export function DashboardNavbar() {
             <MenuList className="w-max border-0">
               <MenuItem className="flex items-center gap-3">
                 <Avatar
-                  src="https://demos.creative-tim.com/material-dashboard/assets/img/team-2.jpg"
+                  src={
+                    currentUser?.avatar != "string"
+                      ? currentUser?.avatar
+                      : "../../public/img/defaultAdmin.png"
+                  }
                   alt="item-1"
                   size="sm"
                   variant="circular"
@@ -163,14 +172,23 @@ export function DashboardNavbar() {
               </MenuItem>
             </MenuList>
           </Menu>
-          <Avatar
-            size="sm"
-            className="cursor-pointer"
-            onClick={() => alert("Coming soon!")}
-            src="/img/bruce-mars.jpeg"
-            alt="avatar"
-            variant="circular"
-          />
+          <Tippy
+            className="capitalize"
+            content={currentUser.firstName + " " + currentUser.lastName}
+          >
+            <Avatar
+              size="sm"
+              className="cursor-pointer"
+              onClick={() => alert("Coming soon!")}
+              src={
+                currentUser?.avatar != "string"
+                  ? currentUser?.avatar
+                  : "../../public/img/defaultAdmin.png"
+              }
+              alt="avatar"
+              variant="circular"
+            />
+          </Tippy>
         </div>
       </div>
     </Navbar>

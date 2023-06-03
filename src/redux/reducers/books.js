@@ -15,6 +15,10 @@ const booksSlice = createSlice({
       })
       .addCase(getBooks.rejected, (state, action) => {
         state.status = "error";
+      })
+      .addCase(getBooksOfPublisher.fulfilled, (state, action) => {
+        state.data = action.payload;
+        state.status = "idle";
       });
   },
 });
@@ -27,6 +31,20 @@ export const getBooks = createAsyncThunk(
       if (res.status === 200) {
         const result = res.data;
         return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+export const getBooksOfPublisher = createAsyncThunk(
+  "books/getBooksOfPublisher",
+  async ({ id }) => {
+    try {
+      const res = await greenBookAPI.getBooksOfPublisher(id);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data.books;
       }
     } catch (error) {
       throw error;

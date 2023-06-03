@@ -71,6 +71,23 @@ const greenBookAPI = {
     })}`;
     return instance.get(url);
   },
+  // ~~~~~~~~~~~~~~Publisher~~~~~~~~~~~~~~~~//
+  getPublishers: () => {
+    const url = `publisher`;
+    return instance.get(url);
+  },
+
+  getBooksOfPublisher: (id, limit = "10", page = "1") => {
+    const query = {
+      ...(id && { publisherId: id }),
+      ...(limit && { rowPerPage: limit }),
+      ...(page && page !== "0" && { pageNumber: page }),
+    };
+    const url = `publisher/find?${queryString.stringify({
+      ...query,
+    })}`;
+    return instance.get(url);
+  },
 
   // ~~~~~~~~~~~~~~User~~~~~~~~~~~~~~~~//
   getUsersAcc: (limit = "10", page = "1") => {
