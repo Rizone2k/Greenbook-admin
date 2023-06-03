@@ -14,7 +14,7 @@ import {
   Authors,
   Books,
   Genres,
-  Coupon,
+  Coupons,
   Users,
 } from "@/pages/dashboard";
 import { SignIn } from "@/pages/auth";
@@ -41,9 +41,9 @@ export const routes = [
       },
       {
         icon: <TicketIcon {...icon} />,
-        name: "coupon",
-        path: "/coupon",
-        element: <Coupon />,
+        name: "coupons",
+        path: "/coupons",
+        element: <Coupons />,
       },
       {
         icon: <TableCellsIcon {...icon} />,
@@ -78,7 +78,7 @@ export const routes = [
       {
         icon: <ArrowRightOnRectangleIcon {...icon} />,
         name: "log out",
-        path: "/log-out",
+        path: "/sign-in",
         element: <SignIn />,
       },
     ],

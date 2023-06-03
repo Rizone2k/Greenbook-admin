@@ -12,6 +12,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     config.headers["Access-Control-Allow-Origin"] = "*";
+    config.headers["Access-Control-Allow-Credentials"] = "true";
     config.headers["Access-Control-Allow-Methods"] =
       "GET, PUT, DELETE, PATCH, OPTIONS";
     config.headers["Content-Type"] = "application/json";
@@ -35,7 +36,7 @@ instance.interceptors.response.use(
     if (statusCode === 401) {
       Cookies.set("LOGGED", false);
       alert("Phiên đã hết hạn, vui lòng đăng nhập lại!") &&
-        navigate("/log-out");
+        navigate("/auth/sign-in");
     } else {
       throw error;
     }

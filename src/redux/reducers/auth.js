@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import instance from "@/api/axios.config";
+import jwt_decode from "jwt-decode";
 
 const authSlice = createSlice({
   name: "auth",
@@ -51,6 +52,7 @@ export const login = createAsyncThunk(
       if (res.status === 200) {
         if (res.data.message === "Login successfully") {
           Cookies.set("access_token", res.data.data.access_token);
+          const role = jwt_decode(res.data.data.access_token);
           const resUser = await instance.get(`/users/find`);
           const user = {
             id: resUser?.data?.data?.id ?? "",
@@ -63,6 +65,7 @@ export const login = createAsyncThunk(
             dateOfBirth: resUser?.data?.data?.date_of_birth ?? "",
             defaultAddress: resUser?.data?.data?.default_address ?? "",
             shipAddress: resUser?.data?.data?.ship_address ?? "",
+            role: role?.roles,
           };
           return { user };
         } else {

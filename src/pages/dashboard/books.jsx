@@ -8,14 +8,15 @@ import {
   Button,
   IconButton,
 } from "@material-tailwind/react";
-import { authorsTableData } from "@/data";
 import { useDispatch, useSelector } from "react-redux";
 import { booksSelector } from "@/redux/selectors";
 import { getBooks } from "@/redux/reducers/books";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { FaSearch } from "react-icons/fa";
+import { FaPencilAlt, FaSearch, FaTrashAlt } from "react-icons/fa";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 export function Books() {
   const [page, setPage] = useState(1);
@@ -66,7 +67,7 @@ export function Books() {
           <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
             <input
               type="text"
-              placeholder="Find book"
+              placeholder="Tìm kiếm..."
               className=" w-3/4 bg-transparent px-2 text-base font-normal text-white"
               name="search"
               id="search"
@@ -83,13 +84,17 @@ export function Books() {
                 {[
                   "Tên sách",
                   "Thể loại",
-                  "trạng thái",
-                  "ngày cập nhật",
+                  "Trạng thái",
+                  "Is deleted",
+                  "Ngày cập nhật",
                   "",
-                ].map((el) => (
+                  "",
+                ].map((el, index) => (
                   <th
-                    key={el}
-                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                    key={index}
+                    className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
+                      el == "Thể loại" ? "hidden lg:block" : ""
+                    }`}
                   >
                     <Typography
                       variant="small"
@@ -104,7 +109,7 @@ export function Books() {
             <tbody>
               {books &&
                 books.map((book, key) => {
-                  const className = `py-3 px-5 ${
+                  const className = `p-1 xl:py-2 xl:px-4 ${
                     key === books.length - 1
                       ? ""
                       : "border-b border-blue-gray-50"
@@ -133,7 +138,7 @@ export function Books() {
                           </div>
                         </div>
                       </td>
-                      <td className={className}>
+                      <td className={`${className} hidden lg:block`}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
                           {book?.genres[0]?.name ?? ""}
                         </Typography>
@@ -166,18 +171,49 @@ export function Books() {
                         />
                       </td>
                       <td className={className}>
+                        <Chip
+                          variant="gradient"
+                          color={
+                            book.is_deleted && book.is_deleted === false
+                              ? "red"
+                              : "green"
+                          }
+                          value={JSON.stringify(book.is_deleted)}
+                          className="py-0.5 px-2 text-[11px] font-medium"
+                        />
+                      </td>
+                      <td className={className}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
                           {book.updated_at}
                         </Typography>
                       </td>
                       <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
-                        >
-                          Edit
-                        </Typography>
+                        <Tippy content="Edit">
+                          <span>
+                            <Typography
+                              variant="small"
+                              as="a"
+                              href="#"
+                              className="text-xs font-semibold text-blue-gray-600"
+                            >
+                              <FaPencilAlt></FaPencilAlt>
+                            </Typography>
+                          </span>
+                        </Tippy>
+                      </td>
+                      <td className={className} onClick={() => alert(book.id)}>
+                        <Tippy content="Delete">
+                          <span>
+                            <Typography
+                              variant="small"
+                              as="a"
+                              href="#"
+                              className="text-xs font-semibold text-red-400"
+                            >
+                              <FaTrashAlt></FaTrashAlt>
+                            </Typography>
+                          </span>
+                        </Tippy>
                       </td>
                     </tr>
                   );
