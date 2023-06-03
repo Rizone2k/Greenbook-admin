@@ -84,13 +84,7 @@ export function Navbar({ brandName, routes, action }) {
 
 Navbar.defaultProps = {
   brandName: "GreenBook",
-  action: (
-    <a href="/" target="_blank">
-      <Button variant="gradient" size="sm" fullWidth>
-        free download
-      </Button>
-    </a>
-  ),
+  action: null,
 };
 
 Navbar.propTypes = {

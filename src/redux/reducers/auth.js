@@ -44,6 +44,14 @@ const authSlice = createSlice({
 export const login = createAsyncThunk(
   "user/login",
   async ({ email, password }, { rejectWithValue }) => {
+    function checkRoles(allowRoles, roles) {
+      for (let role of roles) {
+        if (allowRoles.includes(role)) {
+          return true;
+        }
+      }
+      return false;
+    }
     try {
       const res = await instance.post(
         `/users/login`,
@@ -51,23 +59,28 @@ export const login = createAsyncThunk(
       );
       if (res.status === 200) {
         if (res.data.message === "Login successfully") {
-          Cookies.set("access_token", res.data.data.access_token);
-          const role = jwt_decode(res.data.data.access_token);
-          const resUser = await instance.get(`/users/find`);
-          const user = {
-            id: resUser?.data?.data?.id ?? "",
-            id_user: resUser?.data?.data?.user_idUser ?? "",
-            firstName: resUser?.data?.data?.first_name ?? "",
-            lastName: resUser?.data?.data?.last_name ?? "",
-            avatar: resUser?.data?.data?.avatar ?? "",
-            mobile: resUser?.data?.data?.mobile ?? "",
-            address: resUser?.data?.data?.address ?? "",
-            dateOfBirth: resUser?.data?.data?.date_of_birth ?? "",
-            defaultAddress: resUser?.data?.data?.default_address ?? "",
-            shipAddress: resUser?.data?.data?.ship_address ?? "",
-            role: role?.roles,
-          };
-          return { user };
+          Cookies.set("access_token", res?.data?.data?.access_token);
+          const allowRoles = ["admin", "superadmin", "publisher"];
+          const role = jwt_decode(res?.data?.data?.access_token);
+          if (checkRoles(allowRoles, role?.roles)) {
+            const resUser = await instance.get(`/users/find`);
+            const user = {
+              id: resUser?.data?.data?.id ?? "",
+              id_user: resUser?.data?.data?.user_idUser ?? "",
+              firstName: resUser?.data?.data?.first_name ?? "",
+              lastName: resUser?.data?.data?.last_name ?? "",
+              avatar: resUser?.data?.data?.avatar ?? "",
+              mobile: resUser?.data?.data?.mobile ?? "",
+              address: resUser?.data?.data?.address ?? "",
+              dateOfBirth: resUser?.data?.data?.date_of_birth ?? "",
+              defaultAddress: resUser?.data?.data?.default_address ?? "",
+              shipAddress: resUser?.data?.data?.ship_address ?? "",
+              roles: role?.roles,
+            };
+            return { user };
+          } else {
+            return "Bạn không được quyền truy cập vào tài nguyên này!";
+          }
         } else {
           return res.data.message;
         }

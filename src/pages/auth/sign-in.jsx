@@ -30,7 +30,11 @@ export function SignIn() {
   useEffect(() => {
     const checkError = () => {
       if (currentUser?.firstName && currentUser?.lastName) {
-        navigate("/dashboard/home");
+        if (currentUser?.roles.includes("publisher")) {
+          navigate("/dashboard/books");
+        } else {
+          navigate("/dashboard/home");
+        }
       } else if (
         currentUser === "User is not verified. Email re-confirmed is sent"
       ) {

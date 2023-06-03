@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/reducers/auth";
 import { unwrapResult } from "@reduxjs/toolkit";
 export function Sidenav({ brandImg, brandName, routes }) {
+  // console.log(routes);
   const [controller, dispatch] = useMaterialTailwindController();
   const dispatchRedux = useDispatch();
   const navigate = useNavigate();
