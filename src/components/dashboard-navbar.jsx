@@ -183,7 +183,7 @@ export function DashboardNavbar() {
               src={
                 currentUser?.avatar != "string"
                   ? currentUser?.avatar
-                  : "../../public/img/defaultAdmin.png"
+                  : "/img/defaultAdmin.png"
               }
               alt="avatar"
               variant="circular"
