@@ -5,3 +5,5 @@ export * from "@/pages/dashboard/books";
 export * from "@/pages/dashboard/genres";
 export * from "@/pages/dashboard/coupons";
 export * from "@/pages/dashboard/users";
+export * from "@/pages/dashboard/shippings";
+export * from "@/pages/dashboard/shippings";

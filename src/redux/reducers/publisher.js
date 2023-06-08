@@ -24,7 +24,6 @@ export const getPublishers = createAsyncThunk(
   async () => {
     try {
       const res = await greenBookAPI.getPublishers();
-      console.log(res);
       if (res.status === 200) {
         const result = res.data;
         return result.data;

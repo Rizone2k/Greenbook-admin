@@ -8,6 +8,7 @@ import {
   ListBulletIcon,
   PencilIcon,
   BuildingOfficeIcon,
+  TruckIcon,
 } from "@heroicons/react/24/solid";
 import {
   Home,
@@ -20,6 +21,7 @@ import {
 } from "@/pages/dashboard";
 import { SignIn } from "@/pages/auth";
 import Publishers from "@/pages/dashboard/publishers";
+import Shippings from "@/pages/dashboard/shippings";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -86,6 +88,13 @@ export const routes = [
         name: "genres",
         path: "/genres",
         element: <Genres />,
+        roles: roleAdmin,
+      },
+      {
+        icon: <TruckIcon {...icon} />,
+        name: "shippings",
+        path: "/shippings",
+        element: <Shippings />,
         roles: roleAdmin,
       },
     ],

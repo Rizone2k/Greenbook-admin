@@ -23,8 +23,7 @@ export const getUsers = createAsyncThunk(
   "books/getUsers",
   async ({ limit = "20", page = "1" }) => {
     try {
-      const res = await greenBookAPI.getUsersAcc(limit, page);
-      console.log(res);
+      const res = await greenBookAPI.getUsers(limit, page);
       if (res.status === 200) {
         const result = res.data;
         return result.data;

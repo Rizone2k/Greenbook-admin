@@ -33,11 +33,11 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.currentUser = action.payload;
         Cookies.set("INFO", JSON.stringify(state.currentUser));
-      })
-      .addCase(updateUser.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
-        Cookies.set("INFO", JSON.stringify(state.currentUser));
       });
+    // .addCase(updateUser.fulfilled, (state, action) => {
+    //   state.currentUser = action.payload;
+    //   Cookies.set("INFO", JSON.stringify(state.currentUser));
+    // });
   },
 });
 
@@ -54,7 +54,7 @@ export const login = createAsyncThunk(
     }
     try {
       const res = await instance.post(
-        `/users/login`,
+        `/auth/login`,
         JSON.stringify({ email, password })
       );
       if (res.status === 200) {
@@ -97,61 +97,61 @@ export const login = createAsyncThunk(
   }
 );
 
-export const updateUser = createAsyncThunk(
-  "user/updateUser",
-  async (
-    {
-      avatar,
-      first_name,
-      last_name,
-      date_of_birth,
-      mobile,
-      default_address,
-      ship_address,
-    },
-    { rejectWithValue }
-  ) => {
-    try {
-      const res = await instance.post(
-        `/users/update`,
-        JSON.stringify({
-          avatar,
-          first_name,
-          last_name,
-          date_of_birth,
-          mobile,
-          ship_address,
-          default_address,
-        })
-      );
-      if (res.status === 200) {
-        if (res.data.data) {
-          const user = {
-            id: res?.data?.data?.id ?? "",
-            id_user: res?.data?.data?.user_idUser ?? "",
-            firstName: res?.data?.data?.first_name ?? "",
-            lastName: res?.data?.data?.last_name ?? "",
-            avatar: res?.data?.data?.avatar ?? "",
-            mobile: res?.data?.data?.mobile ?? "",
-            address: res?.data?.data?.address ?? "",
-            dateOfBirth: res?.data?.data?.date_of_birth ?? "",
-            defaultAddress: res?.data?.data?.default_address ?? "",
-            shipAddress: res?.data?.data?.ship_address ?? "",
-          };
-          return user;
-        } else {
-          throw rejectWithValue(res.data.message);
-        }
-      }
-    } catch (error) {
-      if (error.payload) {
-        throw rejectWithValue(error.payload);
-      } else {
-        throw error;
-      }
-    }
-  }
-);
+// export const updateUser = createAsyncThunk(
+//   "user/updateUser",
+//   async (
+//     {
+//       avatar,
+//       first_name,
+//       last_name,
+//       date_of_birth,
+//       mobile,
+//       default_address,
+//       ship_address,
+//     },
+//     { rejectWithValue }
+//   ) => {
+//     try {
+//       const res = await instance.post(
+//         `/users/update`,
+//         JSON.stringify({
+//           avatar,
+//           first_name,
+//           last_name,
+//           date_of_birth,
+//           mobile,
+//           ship_address,
+//           default_address,
+//         })
+//       );
+//       if (res.status === 200) {
+//         if (res.data.data) {
+//           const user = {
+//             id: res?.data?.data?.id ?? "",
+//             id_user: res?.data?.data?.user_idUser ?? "",
+//             firstName: res?.data?.data?.first_name ?? "",
+//             lastName: res?.data?.data?.last_name ?? "",
+//             avatar: res?.data?.data?.avatar ?? "",
+//             mobile: res?.data?.data?.mobile ?? "",
+//             address: res?.data?.data?.address ?? "",
+//             dateOfBirth: res?.data?.data?.date_of_birth ?? "",
+//             defaultAddress: res?.data?.data?.default_address ?? "",
+//             shipAddress: res?.data?.data?.ship_address ?? "",
+//           };
+//           return user;
+//         } else {
+//           throw rejectWithValue(res.data.message);
+//         }
+//       }
+//     } catch (error) {
+//       if (error.payload) {
+//         throw rejectWithValue(error.payload);
+//       } else {
+//         throw error;
+//       }
+//     }
+//   }
+// );
 
 export const logout = createAsyncThunk(
   "user/logout",

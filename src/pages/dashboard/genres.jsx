@@ -13,8 +13,9 @@ import { genresSelector } from "@/redux/selectors";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { FaSearch } from "react-icons/fa";
+import { FaPencilAlt, FaSearch } from "react-icons/fa";
 import { getGenres } from "@/redux/reducers/genres";
+import Tippy from "@tippyjs/react";
 
 export function Genres() {
   const [page, setPage] = useState(1);
@@ -42,7 +43,7 @@ export function Genres() {
   };
 
   useEffect(() => {
-    const getListBook = () => {
+    const getListGenre = () => {
       let row = "20";
       dispatch(getGenres({ limit: row, page: page }))
         .then(unwrapResult)
@@ -50,11 +51,11 @@ export function Genres() {
           console.log(err);
         });
     };
-    getListBook();
+    getListGenre();
   }, [page]);
 
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
+    <div className="mt-12 mb-8 flex min-h-[100vh] flex-col gap-12">
       <Card>
         <CardHeader
           variant="gradient"
@@ -149,13 +150,18 @@ export function Genres() {
                         </Typography>
                       </td>
                       <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
-                        >
-                          Edit
-                        </Typography>
+                        <Tippy content="Edit">
+                          <span>
+                            <Typography
+                              variant="small"
+                              as="a"
+                              href="#"
+                              className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+                            >
+                              <FaPencilAlt></FaPencilAlt>
+                            </Typography>
+                          </span>
+                        </Tippy>
                       </td>
                     </tr>
                   );
