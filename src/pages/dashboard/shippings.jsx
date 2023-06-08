@@ -3,29 +3,35 @@ import {
   CardHeader,
   CardBody,
   Typography,
+  Avatar,
   Chip,
+  Button,
+  IconButton,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { publisherSelector } from "@/redux/selectors";
-import { useEffect } from "react";
+import { shippingsSelector } from "@/redux/selectors";
+import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { FaSearch } from "react-icons/fa";
-import { getPublishers } from "@/redux/reducers/publisher";
+import { FaPencilAlt, FaSearch, FaTrashAlt } from "react-icons/fa";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+import { getShippings } from "@/redux/reducers/shippings";
 
-export function Publishers() {
-  const publishers = useSelector(publisherSelector);
+export function Shippings() {
+  const [page, setPage] = useState(1);
+  const shippings = useSelector(shippingsSelector);
   const dispatch = useDispatch();
-  console.log(publishers);
+  console.log(shippings);
 
-  const getListPublisher = () => {
-    dispatch(getPublishers())
-      .then(unwrapResult)
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   useEffect(() => {
-    getListPublisher();
+    const getListShipping = () => {
+      dispatch(getShippings())
+        .then(unwrapResult)
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    getListShipping();
   }, []);
 
   return (
@@ -37,7 +43,7 @@ export function Publishers() {
           className="mb-8 flex w-full items-center gap-10 p-6"
         >
           <Typography variant="h5" color="white">
-            Nhà xuất bản
+            Phí Vận chuyển
           </Typography>
           <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
             <input
@@ -57,15 +63,18 @@ export function Publishers() {
             <thead>
               <tr>
                 {[
-                  "Nhà xuất bản",
-                  "Ngày tạo",
-                  "Is deleted",
+                  "Mã vận chuyển",
+                  "Trọng lượng tối thiểu",
+                  "Trọng lượng tối đa",
+                  "Giá",
                   "Ngày cập nhật",
+                  "",
+                  "",
                 ].map((el, index) => (
                   <th
                     key={index}
                     className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
-                      el == "Thể loại" ? "hidden lg:block" : ""
+                      el == "Ngày cập nhật" ? "hidden lg:block" : ""
                     }`}
                   >
                     <Typography
@@ -79,16 +88,16 @@ export function Publishers() {
               </tr>
             </thead>
             <tbody>
-              {publishers &&
-                publishers.map((publisher, key) => {
+              {shippings &&
+                shippings.map((shipping, key) => {
                   const className = `p-1 xl:py-2 xl:px-4 ${
-                    key === publishers.length - 1
+                    key === shippings.length - 1
                       ? ""
                       : "border-b border-blue-gray-50"
                   }`;
 
                   return (
-                    <tr key={publisher.id}>
+                    <tr key={shipping.id}>
                       <td className={className}>
                         <div className="flex items-center gap-4">
                           <div>
@@ -97,33 +106,62 @@ export function Publishers() {
                               color="blue-gray"
                               className="font-semibold"
                             >
-                              {publisher.first_name + " " + publisher.last_name}
+                              {shipping.id}
                             </Typography>
                           </div>
                         </div>
                       </td>
                       <td className={className}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {publisher.created_at}
+                          {shipping.from_weight}
                         </Typography>
-                      </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={
-                            publisher.is_deleted &&
-                            publisher.is_deleted === false
-                              ? "red"
-                              : "green"
-                          }
-                          value={JSON.stringify(publisher.is_deleted)}
-                          className="py-0.5 px-2 text-[11px] font-medium"
-                        />
                       </td>
                       <td className={className}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {publisher.updated_at}
+                          {shipping.to_weight}
                         </Typography>
+                      </td>
+                      <td className={className}>
+                        <Typography className="text-xs font-semibold text-blue-gray-600">
+                          {shipping.price.toLocaleString()}
+                        </Typography>
+                      </td>
+                      <td className={`${className} hidden lg:block`}>
+                        <Typography className="text-xs font-semibold text-blue-gray-600">
+                          {shipping.updated_at}
+                        </Typography>
+                      </td>
+
+                      <td className={className}>
+                        <Tippy content="Edit">
+                          <span>
+                            <Typography
+                              variant="small"
+                              as="a"
+                              href="#"
+                              className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+                            >
+                              <FaPencilAlt></FaPencilAlt>
+                            </Typography>
+                          </span>
+                        </Tippy>
+                      </td>
+                      <td
+                        className={className}
+                        onClick={() => alert(shipping.id)}
+                      >
+                        <Tippy content="Delete">
+                          <span>
+                            <Typography
+                              variant="small"
+                              as="a"
+                              href="#"
+                              className="flex items-center justify-center text-xs font-semibold text-red-400"
+                            >
+                              <FaTrashAlt></FaTrashAlt>
+                            </Typography>
+                          </span>
+                        </Tippy>
                       </td>
                     </tr>
                   );
@@ -131,37 +169,9 @@ export function Publishers() {
             </tbody>
           </table>
         </CardBody>
-        {/* <div className="flex items-center justify-end  gap-4">
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center gap-2"
-            onClick={prev}
-            disabled={page === 1}
-          >
-            <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
-          </Button>
-          <div className="flex items-center gap-2">
-            <IconButton {...getItemProps(1)}>1</IconButton>
-            <IconButton {...getItemProps(2)}>2</IconButton>
-            <IconButton {...getItemProps(3)}>3</IconButton>
-            <IconButton {...getItemProps(4)}>4</IconButton>
-            <IconButton {...getItemProps(5)}>5</IconButton>
-          </div>
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center gap-2"
-            onClick={next}
-            disabled={page === 5}
-          >
-            Next
-            <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
-          </Button>
-        </div> */}
       </Card>
     </div>
   );
 }
 
-export default Publishers;
+export default Shippings;

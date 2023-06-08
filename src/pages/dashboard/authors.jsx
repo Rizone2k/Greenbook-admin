@@ -44,7 +44,7 @@ export function Authors() {
   };
 
   useEffect(() => {
-    const getListBook = () => {
+    const getListAuthor = () => {
       let row = "20";
       dispatch(getAuthors({ limit: row, page: page }))
         .then(unwrapResult)
@@ -52,11 +52,11 @@ export function Authors() {
           console.log(err);
         });
     };
-    getListBook();
+    getListAuthor();
   }, [page]);
 
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
+    <div className="mt-12 mb-8 flex min-h-[100vh] flex-col gap-12">
       <Card>
         <CardHeader
           variant="gradient"
@@ -84,7 +84,7 @@ export function Authors() {
             <thead>
               <tr>
                 {[
-                  "Tên tác giả",
+                  "Tác giả",
                   "Ngày tạo",
                   "is deleted",
                   "Ngày cập nhật",
@@ -93,7 +93,9 @@ export function Authors() {
                 ].map((el, index) => (
                   <th
                     key={index}
-                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                    className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
+                      el == "Ngày tạo" ? "hidden lg:block" : ""
+                    }`}
                   >
                     <Typography
                       variant="small"
@@ -118,6 +120,14 @@ export function Authors() {
                     <tr key={author.id}>
                       <td className={className}>
                         <div className="flex items-center gap-4">
+                          <Avatar
+                            src={
+                              author?.image[0]?.url ??
+                              "../../public/img/logo-ct.png"
+                            }
+                            alt={author.name}
+                            size="sm"
+                          />
                           {author?.images && (
                             <Avatar
                               src={author?.images ?? ""}
@@ -136,12 +146,12 @@ export function Authors() {
                           </div>
                         </div>
                       </td>
-                      <td className={className}>
+                      <td className={`${className} hidden lg:block`}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
                           {author?.created_at ?? ""}
                         </Typography>
                       </td>
-                      <td className={className}>
+                      <td className={`${className}`}>
                         <Chip
                           variant="gradient"
                           color={

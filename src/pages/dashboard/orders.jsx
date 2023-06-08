@@ -43,18 +43,18 @@ export function Orders() {
   };
 
   useEffect(() => {
-    const getListCoupon = () => {
+    const getListOrder = () => {
       dispatch(getOrders())
         .then(unwrapResult)
         .catch((err) => {
           console.log(err);
         });
     };
-    getListCoupon();
+    getListOrder();
   }, []);
 
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
+    <div className="mt-12 mb-8 flex min-h-[100vh] flex-col gap-12">
       <Card>
         <CardHeader
           variant="gradient"
@@ -62,7 +62,7 @@ export function Orders() {
           className="mb-8 flex w-full items-center gap-10 p-6"
         >
           <Typography variant="h5" color="white">
-            Mã giảm giá
+            Đơn hàng
           </Typography>
           <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
             <input
@@ -82,11 +82,12 @@ export function Orders() {
             <thead>
               <tr>
                 {[
-                  "Mã giảm giá",
-                  "Thể loại",
+                  "Khách hàng",
+                  "Ngày dặt hàng",
+                  "Địa chỉ",
+                  "total price",
+                  "Số sản phẩm",
                   "Trạng thái",
-                  "Is deleted",
-                  "Ngày cập nhật",
                   "",
                   "",
                 ].map((el, index) => (
@@ -107,85 +108,67 @@ export function Orders() {
               </tr>
             </thead>
             <tbody>
-              {/* {coupons &&
-                coupons.map((coupon, key) => {
+              {orders &&
+                orders.map((order, key) => {
                   const className = `p-1 xl:py-2 xl:px-4 ${
-                    key === coupons.length - 1
+                    key === orders.length - 1
                       ? ""
                       : "border-b border-blue-gray-50"
                   }`;
 
                   return (
-                    <tr key={coupon.id}>
+                    <tr key={order?.order?.id}>
                       <td className={className}>
                         <div className="flex items-center gap-4">
-                          <Avatar
-                            src={book?.images[0]?.url ?? ""}
-                            alt={coupon.name}
-                            size="sm"
-                          />
                           <div>
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-semibold"
                             >
-                              {coupon.name}
-                            </Typography>
-                            <Typography className="text-xs font-normal text-blue-gray-500">
-                              {coupon.cover_type}
+                              {order?.user?.first_name +
+                                " " +
+                                order?.user?.last_name}
                             </Typography>
                           </div>
                         </div>
                       </td>
                       <td className={`${className} hidden lg:block`}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {book?.genres[0]?.name ?? ""}
+                          {order?.order?.created_at}
                         </Typography>
-                        {coupon.genres[1]?.name && (
-                          <Typography className="text-xs font-normal text-blue-gray-500">
-                            {coupon.genres[1]?.name}
-                          </Typography>
-                        )}
-                      </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={
-                            coupon.available_quantity &&
-                            coupon.available_quantity === 0
-                              ? "red"
-                              : coupon.available_quantity > 5
-                              ? "green"
-                              : "blue-gray"
-                          }
-                          value={
-                            coupon.available_quantity &&
-                            coupon.available_quantity === 0
-                              ? "hết hàng"
-                              : coupon.available_quantity > "5"
-                              ? "còn hàng"
-                              : "còn ít"
-                          }
-                          className="py-0.5 px-2 text-[11px] font-medium"
-                        />
-                      </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={
-                            coupon.is_deleted && coupon.is_deleted === false
-                              ? "red"
-                              : "green"
-                          }
-                          value={JSON.stringify(coupon.is_deleted)}
-                          className="py-0.5 px-2 text-[11px] font-medium"
-                        />
                       </td>
                       <td className={className}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {coupon.updated_at}
+                          {order?.user?.ship_address != "string"
+                            ? order?.user?.ship_address
+                            : order?.user?.default_address}
                         </Typography>
+                      </td>
+                      <td className={className}>
+                        <Typography className="text-xs font-semibold text-blue-gray-600">
+                          {order?.order?.total_price?.toLocaleString() ?? ""}
+                        </Typography>
+                      </td>
+                      <td className={className}>
+                        <Typography className="text-xs font-semibold text-blue-gray-600">
+                          {order?.order?.items?.length ?? ""}
+                        </Typography>
+                      </td>
+                      <td className={className}>
+                        <Chip
+                          variant="gradient"
+                          color={
+                            order?.order?.status &&
+                            order?.order?.status == "Mới"
+                              ? "blue"
+                              : order?.order?.status == "Thành công"
+                              ? "green"
+                              : "red"
+                          }
+                          value={order?.order?.status ?? ""}
+                          className="py-0.5 px-2 text-[11px] font-medium"
+                        />
                       </td>
                       <td className={className}>
                         <Tippy content="Edit">
@@ -194,7 +177,7 @@ export function Orders() {
                               variant="small"
                               as="a"
                               href="#"
-                              className="text-xs font-semibold text-blue-gray-600"
+                              className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
                             >
                               <FaPencilAlt></FaPencilAlt>
                             </Typography>
@@ -203,7 +186,7 @@ export function Orders() {
                       </td>
                       <td
                         className={className}
-                        onClick={() => alert(coupon.id)}
+                        onClick={() => alert(order?.order?.id)}
                       >
                         <Tippy content="Delete">
                           <span>
@@ -211,7 +194,7 @@ export function Orders() {
                               variant="small"
                               as="a"
                               href="#"
-                              className="text-xs font-semibold text-red-400"
+                              className="flex items-center justify-center text-xs font-semibold text-red-400"
                             >
                               <FaTrashAlt></FaTrashAlt>
                             </Typography>
@@ -220,7 +203,7 @@ export function Orders() {
                       </td>
                     </tr>
                   );
-                })} */}
+                })}
             </tbody>
           </table>
         </CardBody>

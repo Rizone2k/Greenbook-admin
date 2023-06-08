@@ -55,7 +55,7 @@ export function Users() {
   }, [page]);
 
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
+    <div className="mt-12 mb-8 flex min-h-[100vh] flex-col gap-12">
       <Card>
         <CardHeader
           variant="gradient"
@@ -63,7 +63,7 @@ export function Users() {
           className="mb-8 flex w-full items-center gap-10 p-6"
         >
           <Typography variant="h5" color="white">
-            Sách
+            Người dùng
           </Typography>
           <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
             <input
@@ -82,33 +82,27 @@ export function Users() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {[
-                  "Tên sách",
-                  "Thể loại",
-                  "Trạng thái",
-                  "Is deleted",
-                  "Ngày cập nhật",
-                  "",
-                  "",
-                ].map((el, index) => (
-                  <th
-                    key={index}
-                    className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
-                      el == "Thể loại" ? "hidden lg:block" : ""
-                    }`}
-                  >
-                    <Typography
-                      variant="small"
-                      className="text-[11px] font-bold uppercase text-blue-gray-400"
+                {["User", "Ngày tạo", "is verified", "Role", "", ""].map(
+                  (el, index) => (
+                    <th
+                      key={index}
+                      className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
+                        el == "Ngày tạo" ? "hidden lg:block" : ""
+                      }`}
                     >
-                      {el}
-                    </Typography>
-                  </th>
-                ))}
+                      <Typography
+                        variant="small"
+                        className="text-[11px] font-bold uppercase text-blue-gray-400"
+                      >
+                        {el}
+                      </Typography>
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
-              {/* {users &&
+              {users &&
                 users.map((user, key) => {
                   const className = `p-1 xl:py-2 xl:px-4 ${
                     key === users.length - 1
@@ -121,8 +115,12 @@ export function Users() {
                       <td className={className}>
                         <div className="flex items-center gap-4">
                           <Avatar
-                            src={book?.images[0]?.url ?? ""}
-                            alt={user.name}
+                            src={
+                              user?.images
+                                ? user?.images[0]?.url
+                                : "../../../public/img/logo-ct.png"
+                            }
+                            alt={user.email}
                             size="sm"
                           />
                           <div>
@@ -131,61 +129,36 @@ export function Users() {
                               color="blue-gray"
                               className="font-semibold"
                             >
-                              {user.name}
-                            </Typography>
-                            <Typography className="text-xs font-normal text-blue-gray-500">
-                              {user.cover_type}
+                              {user.email}
                             </Typography>
                           </div>
                         </div>
                       </td>
                       <td className={`${className} hidden lg:block`}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {book?.genres[0]?.name ?? ""}
+                          {user.created_at}
                         </Typography>
-                        {user.genres[1]?.name && (
-                          <Typography className="text-xs font-normal text-blue-gray-500">
-                            {user.genres[1]?.name}
-                          </Typography>
-                        )}
                       </td>
+
                       <td className={className}>
                         <Chip
                           variant="gradient"
                           color={
-                            user.available_quantity &&
-                            user.available_quantity === 0
-                              ? "red"
-                              : user.available_quantity > 5
+                            user.is_verified &&
+                            JSON.stringify(user.is_verified) == "true"
                               ? "green"
-                              : "blue-gray"
+                              : "red"
                           }
-                          value={
-                            user.available_quantity &&
-                            user.available_quantity === 0
-                              ? "hết hàng"
-                              : user.available_quantity > "5"
-                              ? "còn hàng"
-                              : "còn ít"
-                          }
+                          value={JSON.stringify(user.is_verified)}
                           className="py-0.5 px-2 text-[11px] font-medium"
                         />
                       </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={
-                            user.is_deleted && user.is_deleted === false
-                              ? "red"
-                              : "green"
-                          }
-                          value={JSON.stringify(user.is_deleted)}
-                          className="py-0.5 px-2 text-[11px] font-medium"
-                        />
-                      </td>
-                      <td className={className}>
+                      <td className={`${className}`}>
                         <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {user.updated_at}
+                          |{" "}
+                          {user?.roles.map(
+                            (role) => role.name + " | " ?? "Đang cập nhật"
+                          )}
                         </Typography>
                       </td>
                       <td className={className}>
@@ -195,7 +168,7 @@ export function Users() {
                               variant="small"
                               as="a"
                               href="#"
-                              className="text-xs font-semibold text-blue-gray-600"
+                              className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
                             >
                               <FaPencilAlt></FaPencilAlt>
                             </Typography>
@@ -209,7 +182,7 @@ export function Users() {
                               variant="small"
                               as="a"
                               href="#"
-                              className="text-xs font-semibold text-red-400"
+                              className="flex items-center justify-center text-xs font-semibold text-red-400"
                             >
                               <FaTrashAlt></FaTrashAlt>
                             </Typography>
@@ -218,7 +191,7 @@ export function Users() {
                       </td>
                     </tr>
                   );
-                })} */}
+                })}
             </tbody>
           </table>
         </CardBody>
