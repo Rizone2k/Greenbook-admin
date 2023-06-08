@@ -118,7 +118,7 @@ export function Users() {
                             src={
                               user?.images
                                 ? user?.images[0]?.url
-                                : "../../../public/img/logo-ct.png"
+                                : "/img/logo-ct.png"
                             }
                             alt={user.email}
                             size="sm"
