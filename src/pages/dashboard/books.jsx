@@ -490,7 +490,7 @@ export function Books() {
                             <Avatar
                               src={
                                 book?.images[0]?.url ??
-                                "../../../public/img/logo-ct.png"
+                                "/img/logo-ct.png"
                               }
                               alt={book.name}
                               size="sm"
@@ -668,7 +668,7 @@ export function Books() {
                             ? URL.createObjectURL(selectedImagePreview)
                             : img.length > 0
                             ? img
-                            : "../../../public/img/logo-ct.png"
+                            : "/img/logo-ct.png"
                         }
                         alt={"img"}
                       />
@@ -879,7 +879,7 @@ export function Books() {
                               ? URL.createObjectURL(selectedImage)
                               : img.length > 0
                               ? img
-                              : "../../../public/img/logo-ct.png"
+                              : "/img/logo-ct.png"
                           }
                           alt={"img"}
                         />
