@@ -123,7 +123,7 @@ export function Authors() {
                           <Avatar
                             src={
                               author?.image[0]?.url ??
-                              "../../public/img/logo-ct.png"
+                              "/img/logo-ct.png"
                             }
                             alt={author.name}
                             size="sm"
