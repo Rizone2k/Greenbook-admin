@@ -112,9 +112,13 @@ const greenBookAPI = {
     const url = `book_admin/upload_image?${queryString.stringify({
       ...query,
     })}`;
-    console.log(url);
-    console.log(image);
-    return instance.post(url, JSON.stringify(image));
+    var formData = new FormData();
+    formData.append("image", image);
+    return instance.post(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
 
   deleteBook: (id) => {
@@ -167,19 +171,20 @@ const greenBookAPI = {
     const url = `author_admin/?${queryString.stringify({
       ...query,
     })}`;
-    var formData = new FormData();
-    formData.append("name", name);
-    formData.append("image", image);
-    return instance.put(url, JSON.stringify(formData));
+    const requestData = {
+      name,
+      image,
+    };
+    return instance.put(url, JSON.stringify(requestData));
   },
 
   createAuthor: (name, image) => {
     const url = `author_admin/`;
-    var formData = new FormData();
-    formData.append("name", name);
-    formData.append("image", image);
-    console.log(JSON.stringify(formData));
-    return instance.post(url, JSON.stringify(formData));
+    const requestData = {
+      name,
+      image,
+    };
+    return instance.post(url, JSON.stringify(requestData));
   },
 
   deleteAuthor: (id) => {
@@ -224,20 +229,14 @@ const greenBookAPI = {
     const url = `genre_admin/?${queryString.stringify({
       ...query,
     })}`;
-    var formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    console.log(JSON.stringify(formData));
-    return instance.put(url, JSON.stringify(formData));
+    const requestData = { name, description };
+    return instance.put(url, JSON.stringify(requestData));
   },
 
   createGenre: (name, description) => {
     const url = `genre_admin/`;
-    var formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    console.log(JSON.stringify(formData));
-    return instance.post(url, JSON.stringify(formData));
+    const requestData = { name, description };
+    return instance.post(url, JSON.stringify(requestData));
   },
 
   deleteGenre: (id) => {
@@ -287,11 +286,8 @@ const greenBookAPI = {
     const url = `user_admin/update_role?${queryString.stringify({
       ...query,
     })}`;
-    var formData = new FormData();
-    const rolesArray = listRole.map((role) => role);
-    formData.append(JSON.stringify(rolesArray));
-    console.log(JSON.stringify(formData));
-    return instance.post(url, JSON.stringify(formData));
+    console.log(JSON.stringify(listRole));
+    return instance.post(url, JSON.stringify(listRole));
   },
 
   resetPassword: (email) => {
@@ -320,9 +316,10 @@ const greenBookAPI = {
     return instance.get(url);
   },
 
-  updateStatusOrder: (id) => {
+  updateStatusOrder: (id, status) => {
     const query = {
       ...(id && { genreId: id }),
+      ...(status && { status: status }),
     };
     const url = `/order_adminstatus?${queryString.stringify({
       ...query,
@@ -336,7 +333,7 @@ const greenBookAPI = {
     return instance.get(url);
   },
 
-  createShippingFee: (fromWeight = "0", toWeight, price = "0") => {
+  createShippingFee: (fromWeight = "0", toWeight = "1", price = "0") => {
     const query = {
       ...(fromWeight && { from_weight: fromWeight }),
       ...(toWeight && { to_weight: toWeight }),
@@ -348,19 +345,20 @@ const greenBookAPI = {
     return instance.post(url);
   },
 
-  updateShippingFee: (id, fromWeight = "0", toWeight, price = "0") => {
+  updateShippingFee: (id, fromWeight = "0", toWeight = "1", price = "0") => {
     const query = {
       ...(id && { shippingId: id }),
     };
     const url = `/shipping_admin/update?${queryString.stringify({
       ...query,
     })}`;
-    var formData = new FormData();
-    formData.append("from_weight", fromWeight);
-    formData.append("to_weight", toWeight);
-    formData.append("price", price);
-    console.log(JSON.stringify(formData));
-    return instance.put(url, JSON.stringify(formData));
+    const requestData = {
+      from_weight: fromWeight,
+      to_weight: toWeight,
+      price: price,
+    };
+    console.log(JSON.stringify(requestData));
+    return instance.put(url, JSON.stringify(requestData));
   },
   // ~~~~~~~~~~~~~~Discount~~~~~~~~~~~~~~~~//
   getCoupons: () => {
@@ -373,7 +371,7 @@ const greenBookAPI = {
     amount,
     minPrice = "0",
     limitPrice,
-    isPercent = "false",
+    isPercent = "true",
     expiredAt
   ) => {
     const query = {
@@ -384,7 +382,7 @@ const greenBookAPI = {
       ...(isPercent && { is_percent: isPercent }),
       ...(expiredAt && { expired_at: expiredAt }),
     };
-    const url = `/shipping_admin/create?${queryString.stringify({
+    const url = `/discount_admin/create?${queryString.stringify({
       ...query,
     })}`;
     return instance.post(url);
@@ -402,18 +400,18 @@ const greenBookAPI = {
     const query = {
       ...(id && { couponId: id }),
     };
-    const url = `/shipping_admin/create?${queryString.stringify({
+    const url = `/discount_admin/update?${queryString.stringify({
       ...query,
     })}`;
-    var formData = new FormData();
-    formData.append("coupon", coupon);
-    formData.append("amount", amount);
-    formData.append("min_price", minPrice);
-    formData.append("limit_price", limitPrice);
-    formData.append("is_percent", isPercent);
-    formData.append("expired_at", expiredAt);
-    console.log(JSON.stringify(formData));
-    return instance.put(url, JSON.stringify(formData));
+    const requestData = {
+      coupon: coupon,
+      amount: amount,
+      min_price: minPrice,
+      limit_price: limitPrice,
+      is_percent: isPercent,
+      expired_at: expiredAt,
+    };
+    return instance.put(url, JSON.stringify(requestData));
   },
 };
 

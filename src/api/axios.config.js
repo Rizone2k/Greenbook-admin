@@ -15,7 +15,6 @@ instance.interceptors.request.use(
     config.headers["Access-Control-Allow-Credentials"] = "true";
     config.headers["Access-Control-Allow-Methods"] =
       "GET, PUT, DELETE, PATCH, OPTIONS";
-    config.headers["Content-Type"] = "application/json";
     const access_token = Cookies.get("access_token");
     if (access_token) {
       config.headers.Authorization = `Bearer ${access_token}`;

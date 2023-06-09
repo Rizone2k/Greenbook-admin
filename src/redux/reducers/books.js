@@ -24,6 +24,14 @@ const booksSlice = createSlice({
         state.bookIdJustCreated = action.payload.id;
         state.status = "idle";
       })
+      .addCase(updateBookImage.fulfilled, (state, action) => {
+        state.bookIdJustCreated = "";
+        state.status = "idle";
+      })
+      .addCase(updateBookImage.rejected, (state, action) => {
+        state.bookIdJustCreated = "";
+        state.status = "idle";
+      })
       .addCase(searchBook.fulfilled, (state, action) => {
         state.data = action.payload;
         state.status = "idle";
@@ -113,7 +121,6 @@ export const updateBookImage = createAsyncThunk(
     console.log(id, image);
     try {
       const res = await greenBookAPI.updateBookImage(id, image);
-      console.log("res", res);
       if (res.status === 200) {
         const result = res.data;
         return result.data;
