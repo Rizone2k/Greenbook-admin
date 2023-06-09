@@ -89,7 +89,6 @@ export function Orders() {
                   "Số sản phẩm",
                   "Trạng thái",
                   "",
-                  "",
                 ].map((el, index) => (
                   <th
                     key={index}
@@ -180,23 +179,6 @@ export function Orders() {
                               className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
                             >
                               <FaPencilAlt></FaPencilAlt>
-                            </Typography>
-                          </span>
-                        </Tippy>
-                      </td>
-                      <td
-                        className={className}
-                        onClick={() => alert(order?.order?.id)}
-                      >
-                        <Tippy content="Delete">
-                          <span>
-                            <Typography
-                              variant="small"
-                              as="a"
-                              href="#"
-                              className="flex items-center justify-center text-xs font-semibold text-red-400"
-                            >
-                              <FaTrashAlt></FaTrashAlt>
                             </Typography>
                           </span>
                         </Tippy>

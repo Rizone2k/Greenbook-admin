@@ -9,7 +9,6 @@ import {
   Chip as ChipTailwind,
   Select as SelectTalwind,
   Input,
-  Option,
   Textarea,
 } from "@material-tailwind/react";
 import {
@@ -45,15 +44,10 @@ import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import {
-  FaAt,
-  FaHeart,
-  FaMapMarkerAlt,
   FaPencilAlt,
-  FaPhone,
   FaEdit,
   FaSearch,
   FaTrashAlt,
-  FaUserCircle,
   FaCheck,
   FaTimes,
   FaPlus,
@@ -82,7 +76,6 @@ export function Books() {
   const [color, setColor] = useState("#980303");
   const [showSelectImg, setShowSelectImg] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedImagePreview, setSelectedImagePreview] = useState(null);
 
   const [signal, setSignal] = useState(false);
   const [search, setSearch] = useState("");
@@ -104,33 +97,6 @@ export function Books() {
   const [genreIds, setGenreIds] = useState([]);
   const [authorIds, setAuthorIds] = useState([]);
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    const fileReader = new FileReader();
-    fileReader.onload = function (event) {
-      const base64Image = event.target.result;
-      console.log(base64Image);
-      setSelectedImage(base64Image);
-    };
-    fileReader.readAsDataURL(file);
-    console.log(event.target.files[0]);
-    setSelectedImagePreview(file);
-  };
-
-  const handleUpdateImage = (id) => {
-    console.log(id);
-    console.log(selectedImage);
-    // setShowSelectImg(!showSelectImg);
-    dispatch(updateBookImage({id:id, image:selectedImage}))
-      .then(unwrapResult)
-      .then(setSignal(!signal))
-      .then(notify("Đã cập nhật!"))
-      .catch((err) => {
-        console.log(err);
-        notify(err.message);
-      });
-  };
-
   const getItemProps = (index) => ({
     variant: page === index ? "filled" : "text",
     color: page === index ? "blue" : "blue-gray",
@@ -139,33 +105,51 @@ export function Books() {
 
   const next = () => {
     if (page === 5) return;
-
     setPage(page + 1);
   };
 
   const prev = () => {
     if (page === 1) return;
-
     setPage(page - 1);
+  };
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file);
+  };
+
+  const handleUpdateImage = (id) => {
+    dispatch(updateBookImage({ id: id, image: selectedImage }))
+      .then(unwrapResult)
+      .then(setShowEdit(false))
+      .then(setShowCreate(false))
+      .then(setSignal(!signal))
+      .then(notify("Đã cập nhật!"))
+      .catch((err) => {
+        console.log(err);
+        notify(err.message);
+      });
   };
 
   const handleShowEdit = () => {
     setShowEdit(!showEdit);
   };
+
   const handleShowCreate = () => {
     setShowCreate(!showCreate);
   };
 
   const handleDeleteBook = (id) => {
     dispatch(deleteBook(id))
-      .then(unwrapResult)
       .then(setSignal(!signal))
-      .then(notify("Đã xoá!"))
+      .then(unwrapResult)
+      .then(notify("Đang xoá!"))
       .catch((err) => {
         console.log(err);
         notify(err.message);
       });
   };
+
   const handleUpdateBook = () => {
     try {
       dispatch(
@@ -190,7 +174,7 @@ export function Books() {
         .then(unwrapResult)
         .then(handleRefresh)
         .then(setSignal(!signal))
-        .then(notify("Đã cập nhật!"))
+        .then(notify("Đang cập nhật!"))
         .catch((err) => {
           console.log(err);
           notify(err.message);
@@ -200,13 +184,13 @@ export function Books() {
       console.log(error);
     }
   };
+
   const handleCreateBook = () => {
     try {
       if (
         name.length > 0 &&
         isbn.length > 0 &&
         weight.length > 0 &&
-        ageLimit.length > 0 &&
         handCover.length > 0 &&
         coverType.length > 0 &&
         description.length > 0 &&
@@ -256,7 +240,6 @@ export function Books() {
       let response;
       if (idBook) {
         response = await greenBookAPI.getBook(idBook, "");
-        console.log(response?.data?.data);
         setIdBook(response?.data?.data?.id);
         setImg(response?.data?.data?.images[0]?.url);
         setName(response?.data?.data?.name);
@@ -279,6 +262,8 @@ export function Books() {
   };
 
   const handleClickCreateBook = () => {
+    setShowSelectImg(false);
+    setSelectedImage(null);
     setIdBook("");
     setImg([]);
     setName("");
@@ -293,6 +278,7 @@ export function Books() {
     setGenre([]);
     setAuthor([]);
   };
+
   const handleClickUpdateBook = (
     id,
     img,
@@ -308,6 +294,8 @@ export function Books() {
     genre,
     author
   ) => {
+    setShowSelectImg(false);
+    setSelectedImage(null);
     setIdBook(id);
     setImg(img);
     setName(name);
@@ -346,7 +334,6 @@ export function Books() {
     }
     const debouncedSearch = debounce(handleSearchBook, 500);
     search && search.length > 0 && debouncedSearch(search);
-    // : debouncedSearch("a");
   }, [search]);
 
   useEffect(() => {
@@ -488,10 +475,7 @@ export function Books() {
                         <td className={className}>
                           <div className="flex items-center gap-4">
                             <Avatar
-                              src={
-                                book?.images[0]?.url ??
-                                "/img/logo-ct.png"
-                              }
+                              src={book?.images[0]?.url ?? "/img/logo-ct.png"}
                               alt={book.name}
                               size="sm"
                             />
@@ -664,8 +648,8 @@ export function Books() {
                         className="transition-transform duration-500 hover:scale-105"
                         width={300}
                         src={
-                          showSelectImg && selectedImagePreview
-                            ? URL.createObjectURL(selectedImagePreview)
+                          showSelectImg && selectedImage
+                            ? URL.createObjectURL(selectedImage)
                             : img.length > 0
                             ? img
                             : "/img/logo-ct.png"
@@ -797,7 +781,7 @@ export function Books() {
                             value={coverType}
                             type="text"
                             variant="standard"
-                            label="7. Bìa"
+                            label="8. Bìa"
                           />
                         </div>
                         <div className="flex items-center p-2">
@@ -808,16 +792,7 @@ export function Books() {
                             value={availableQuantity}
                             type="text"
                             variant="standard"
-                            label="8. Số lượng có sẵn"
-                          />
-                        </div>
-                        <div className="flex items-center p-2">
-                          <Input
-                            onChange={(e) => setPrice(e.target.value)}
-                            value={price}
-                            type="text"
-                            variant="standard"
-                            label="9. Giá"
+                            label="9. Số lượng có sẵn"
                           />
                         </div>
                       </div>
@@ -875,7 +850,7 @@ export function Books() {
                           className="transition-transform duration-500 hover:scale-105"
                           width={300}
                           src={
-                            showSelectImg && selectedImage && img.length > 0
+                            showSelectImg && selectedImage
                               ? URL.createObjectURL(selectedImage)
                               : img.length > 0
                               ? img
@@ -1021,7 +996,7 @@ export function Books() {
                             value={coverType}
                             type="text"
                             variant="standard"
-                            label="7. Bìa"
+                            label="8. Bìa"
                           />
                         </div>
                         <div className="flex items-center p-2">
@@ -1032,16 +1007,7 @@ export function Books() {
                             value={availableQuantity}
                             type="text"
                             variant="standard"
-                            label="8. Số lượng có sẵn"
-                          />
-                        </div>
-                        <div className="flex items-center p-2">
-                          <Input
-                            onChange={(e) => setPrice(e.target.value)}
-                            value={price}
-                            type="text"
-                            variant="standard"
-                            label="9. Giá"
+                            label="9. Số lượng có sẵn"
                           />
                         </div>
                       </div>
