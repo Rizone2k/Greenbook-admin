@@ -8,6 +8,7 @@ import ordersSlice from "./reducers/orders.js";
 import usersSlice from "./reducers/users.js";
 import publishersSlice from "./reducers/publisher.js";
 import shippingsSlice from "./reducers/shippings.js";
+import dashboardSlice from "./reducers/dashboard.js";
 
 const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ const store = configureStore({
     users: usersSlice.reducer,
     publishers: publishersSlice.reducer,
     shippings: shippingsSlice.reducer,
+    dashboard: dashboardSlice.reducer,
   },
 });
 

@@ -59,7 +59,7 @@ export function Publishers() {
                 {[
                   "Nhà xuất bản",
                   "Ngày tạo",
-                  "Is deleted",
+                  "Đã xoá",
                   "Ngày cập nhật",
                 ].map((el, index) => (
                   <th

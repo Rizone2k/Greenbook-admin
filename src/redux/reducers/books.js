@@ -193,7 +193,6 @@ export const deleteBook = createAsyncThunk("books/deleteBook", async (id) => {
 export const searchBook = createAsyncThunk(
   "books/searchBook",
   async (search) => {
-    console.log("search", search);
     try {
       const res = await greenBookAPI.searchBook(search);
       if (res.status === 200) {

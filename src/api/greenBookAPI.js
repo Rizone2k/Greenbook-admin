@@ -318,12 +318,12 @@ const greenBookAPI = {
 
   updateStatusOrder: (id, status) => {
     const query = {
-      ...(id && { genreId: id }),
-      ...(status && { status: status }),
+      ...(id && { orderId : id }),
     };
-    const url = `/order_adminstatus?${queryString.stringify({
+    const url = `/order_adminstatus?status=${status}&${queryString.stringify({
       ...query,
     })}`;
+    console.log("url",url);
     return instance.post(url);
   },
 
@@ -413,6 +413,16 @@ const greenBookAPI = {
     };
     return instance.put(url, JSON.stringify(requestData));
   },
+    // ~~~~~~~~~~~~~~Dashboard~~~~~~~~~~~~~~~~//
+    getDashboard: (day="7") => {
+      const query = {
+        ...(day && { day_filter : day }),
+      };
+      const url = `/dashboard_admin?${queryString.stringify({
+        ...query,
+      })}`;
+      return instance.get(url);
+    },
 };
 
 greenBookAPI.propTypes = {

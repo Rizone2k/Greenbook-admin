@@ -82,7 +82,7 @@ export function Users() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["User", "Ngày tạo", "is verified", "Role", "", ""].map(
+                {["Người dùng", "Ngày tạo", "Đã xác thực", "Quyền", "", ""].map(
                   (el, index) => (
                     <th
                       key={index}

@@ -13,22 +13,134 @@ import { ordersSelector } from "@/redux/selectors";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { FaPencilAlt, FaSearch, FaTrashAlt } from "react-icons/fa";
+import { FaCheckCircle, FaPencilAlt, FaSearch, FaTimesCircle, FaTrashAlt } from "react-icons/fa";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import { getOrders } from "@/redux/reducers/orders";
+import { InputLabel, MenuItem, OutlinedInput, Select, Stack } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import CancelIcon from "@mui/icons-material/Cancel";
+import greenBookAPI from "@/api/greenBookAPI";
+import { debounce } from "lodash";
 
 export function Orders() {
   const [page, setPage] = useState(1);
   const orders = useSelector(ordersSelector);
   const dispatch = useDispatch();
-  console.log(orders);
-
   const getItemProps = (index) => ({
     variant: page === index ? "filled" : "text",
     color: page === index ? "blue" : "blue-gray",
     onClick: () => setPage(index),
   });
+
+  const handleChangeStatus = async({id, status})=>{
+   
+    const getListOrder = () => {
+      dispatch(getOrders())
+        .then(unwrapResult)
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    const debouncedSearch = debounce(getListOrder, 1000);
+    try {
+      await greenBookAPI.updateStatusOrder(id,status)
+      debouncedSearch();
+    } catch (error) {
+      console.log(error.message);
+    }
+    
+    
+  }
+
+  const Item = (props)=>{
+     const [showEdit, setShowEdit] = useState(false);
+     const [selected, setSelected] = useState('');
+     const data=[ "Mới", "Đang xác nhận","Đã xác nhận", "Đang vận chuyển","Thành công", "Thất bại"]
+    return(
+      <tr>
+        <td className={props.className}>
+          <div className="flex items-center gap-4">
+            <div>
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="font-semibold"
+              >
+                {props?.user}
+              </Typography>
+            </div>
+          </div>
+        </td>
+        <td className={`${props.className} hidden lg:block`}>
+          <Typography className="text-xs font-semibold text-blue-gray-600">
+            {props?.created_at}
+          </Typography>
+        </td>
+        <td className={props.className}>
+          <Typography className="text-xs font-semibold text-blue-gray-600">
+            {props?.ship_address != "string"
+              ? props?.ship_address
+              : props?.default_address}
+          </Typography>
+        </td>
+        <td className={props.className}>
+          <Typography className="text-xs font-semibold text-blue-gray-600">
+            {props?.total_price?.toLocaleString() ?? ""}
+          </Typography>
+        </td>
+        <td className={props.className}>
+          <Typography className="text-xs font-semibold text-blue-gray-600">
+            {props?.items?.length ?? ""}
+          </Typography>
+        </td>
+        <td className={props.className}>
+          {showEdit? 
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={selected}
+            onChange={(event)=>setSelected(event.target.value)}
+          >
+            {data.map((e)=><MenuItem key={e}  className="text-sm" value={e}><small>{e}</small></MenuItem>)}
+          
+          </Select>
+        :
+          <Chip
+            variant="gradient"
+            color={
+              props?.status &&
+              props?.status == "Mới"
+                ? "blue"
+                : props?.status == "Thành công"
+                ? "green"
+                : "red"
+            }
+            value={props?.status ?? ""}
+            className="py-0.5 px-2 text-[11px] font-medium"
+          />}
+        </td>
+        <td className={props.className} onClick={()=>setShowEdit(!showEdit)}>
+        {showEdit ?
+        <div className="flex gap-2"> 
+          <b className="cursor-pointer" onClick={()=>{handleChangeStatus({id:props?.id, status:selected}); setShowEdit(false)}}><FaCheckCircle className="text-[#03943b]"></FaCheckCircle></b>
+          <span className="cursor-pointer" onClick={()=>setShowEdit(false)}><FaTimesCircle className="text-[#941903]"></FaTimesCircle></span>
+        </div>: 
+          <Tippy content="Chỉnh sửa">
+            <span>
+              <Typography
+                variant="small"
+                as="a"
+                className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+              >
+                <FaPencilAlt></FaPencilAlt>
+              </Typography>
+            </span>
+          </Tippy>}
+        </td>
+      </tr>
+    )
+  }
 
   const next = () => {
     if (page === 5) return;
@@ -85,7 +197,7 @@ export function Orders() {
                   "Khách hàng",
                   "Ngày dặt hàng",
                   "Địa chỉ",
-                  "total price",
+                  "Tổng",
                   "Số sản phẩm",
                   "Trạng thái",
                   "",
@@ -116,74 +228,18 @@ export function Orders() {
                   }`;
 
                   return (
-                    <tr key={order?.order?.id}>
-                      <td className={className}>
-                        <div className="flex items-center gap-4">
-                          <div>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-semibold"
-                            >
-                              {order?.user?.first_name +
-                                " " +
-                                order?.user?.last_name}
-                            </Typography>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={`${className} hidden lg:block`}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {order?.order?.created_at}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {order?.user?.ship_address != "string"
-                            ? order?.user?.ship_address
-                            : order?.user?.default_address}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {order?.order?.total_price?.toLocaleString() ?? ""}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {order?.order?.items?.length ?? ""}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={
-                            order?.order?.status &&
-                            order?.order?.status == "Mới"
-                              ? "blue"
-                              : order?.order?.status == "Thành công"
-                              ? "green"
-                              : "red"
-                          }
-                          value={order?.order?.status ?? ""}
-                          className="py-0.5 px-2 text-[11px] font-medium"
-                        />
-                      </td>
-                      <td className={className}>
-                        <Tippy content="Edit">
-                          <span>
-                            <Typography
-                              variant="small"
-                              as="a"
-                              href="#"
-                              className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
-                            >
-                              <FaPencilAlt></FaPencilAlt>
-                            </Typography>
-                          </span>
-                        </Tippy>
-                      </td>
-                    </tr>
+                    <Item 
+                    key={order?.order?.id}
+                    id={order?.order?.id}
+                    user={order?.user?.first_name + " " +order?.user?.last_name}
+                    className={className}
+                    created_at={order?.order?.created_at}
+                    total_price={order?.order?.total_price}
+                    items={order?.order?.items}
+                    status={order?.order?.status}
+                    ship_address={order?.user?.ship_address}
+                    default_address={order?.user?.default_address}
+                    ></Item>
                   );
                 })}
             </tbody>

@@ -4,9 +4,11 @@ import { IconButton } from "@material-tailwind/react";
 import { Sidenav, DashboardNavbar, Configurator, Footer } from "@/components";
 import routes from "@/routes/routes";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { currentUserSelector, isLoggedInSelector } from "@/redux/selectors";
 import { useEffect, useState } from "react";
+import { getDashboard } from "@/redux/reducers/dashboard";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -17,6 +19,18 @@ export function Dashboard() {
   const [routesLayout, setRoutesLayout] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const allowRoles = ["admin", "superadmin"];
+  const dispatchRedux = useDispatch();
+
+  useEffect(() => {
+    const getDashboardAdmin = () => {
+      dispatchRedux(getDashboard({day:"7" }))
+        .then(unwrapResult)
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    isLogged && getDashboardAdmin();
+  }, []);
 
   useEffect(() => {
     isLogged == false && navigate("/auth/sign-in");
@@ -56,7 +70,7 @@ export function Dashboard() {
   return (
     isLogged && (
       <div className="min-h-screen bg-blue-gray-50/50">
-        <div className="fixed min-h-[35vh] w-full  bg-blue-500"></div>
+        <div className="fixed min-h-[12vh] w-full bg-blue-500"></div>
         <Sidenav
           routes={isAdmin ? routes : filterRoles(currentUser?.roles, routes)}
           brandImg={
