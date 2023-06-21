@@ -1,5 +1,4 @@
 import { chartsConfig } from "@/configs";
-
 const websiteViewsChart = {
   type: "bar",
   height: 220,
@@ -45,17 +44,7 @@ const dailySalesChart = {
     },
     xaxis: {
       ...chartsConfig.xaxis,
-      categories: [
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
+      categories: ["M", "T", "W", "T", "F", "S", "S"],
     },
   },
 };
@@ -65,7 +54,7 @@ const completedTasksChart = {
   series: [
     {
       name: "Tasks",
-      data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+      data: [50, 40, 300, 220, 500, 250, 400],
     },
   ],
 };
@@ -77,13 +66,6 @@ export const statisticsChartsData = [
     description: "Người dùng tiềm năng",
     footer: "Cập nhật 10 phút trước",
     chart: websiteViewsChart,
-  },
-  {
-    color: "pink",
-    title: "Doanh thu hàng ngày",
-    description: "Tăng 15% vào hôm nay",
-    footer: "Cập nhật 4 phút trước",
-    chart: dailySalesChart,
   },
   {
     color: "green",

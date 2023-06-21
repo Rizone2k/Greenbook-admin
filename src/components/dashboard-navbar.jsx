@@ -51,17 +51,7 @@ export function DashboardNavbar() {
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
         <div className="relative capitalize">
-          <div className=" relative flex items-center  rounded-lg bg-white py-2 px-4 shadow-md shadow-[#9594945b]">
-            <input
-              type="text"
-              placeholder="search.."
-              className="bg-transparent px-2 text-base font-normal text-black"
-              name="search"
-              id="search"
-            />
-            <div className="absolute right-0 flex h-full items-center rounded-r-lg bg-[#3e444a] py-2 px-3">
-              <FaSearch className="text-[white]"></FaSearch>
-            </div>
+          <div className=" relative flex items-center rounded-lg bg-transparent py-2 px-4">
           </div>
         </div>
         <div className="flex items-center">

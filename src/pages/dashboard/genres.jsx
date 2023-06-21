@@ -85,7 +85,7 @@ export function Genres() {
                 {[
                   "Tên thể loại",
                   "Ngày tạo",
-                  "is deleted",
+                  "Đã xoá",
                   "Ngày cập nhật",
                   "",
                 ].map((el) => (

@@ -252,7 +252,7 @@ export function Coupons() {
                 <tr>
                   {[
                     "Mã giảm giá",
-                    "Amount",
+                    "Số lượng",
                     "Đơn hàng tối thiểu",
                     "Giảm tối đa",
                     "Hạn sử dụng",

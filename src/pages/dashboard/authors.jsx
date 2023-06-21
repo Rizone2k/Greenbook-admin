@@ -86,7 +86,7 @@ export function Authors() {
                 {[
                   "Tác giả",
                   "Ngày tạo",
-                  "is deleted",
+                  "Đã xoá",
                   "Ngày cập nhật",
                   "",
                   "",

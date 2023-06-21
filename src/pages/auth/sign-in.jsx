@@ -1,5 +1,5 @@
 import { login } from "@/redux/reducers/auth";
-import { currentUserSelector } from "@/redux/selectors";
+import { currentUserSelector, isLoggedInSelector } from "@/redux/selectors";
 import {
   Card,
   CardHeader,
@@ -24,6 +24,7 @@ export function SignIn() {
   const [color, setColor] = useState("#980303");
   const [middle, setMiddle] = useState(true);
   const currentUser = useSelector(currentUserSelector);
+  const isLoggedIn = useSelector(isLoggedInSelector);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -45,7 +46,7 @@ export function SignIn() {
         notify(currentUser);
       }
     };
-    checkError();
+   checkError();
   }, [middle]);
 
   // alert
@@ -101,7 +102,7 @@ export function SignIn() {
             className="mb-4 grid h-28 place-items-center"
           >
             <Typography variant="h3" color="white">
-              Sign In
+           Đăng nhập
             </Typography>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
@@ -132,27 +133,27 @@ export function SignIn() {
               required
             />
             <div className="-ml-2.5">
-              <Checkbox label="Remember Me" />
+              <Checkbox label="Nhớ tôi" />
             </div>
           </CardBody>
           <CardFooter className="pt-0">
             <Button
               type="submit"
-              onClick={handleLogin}
+              onClick={()=>handleLogin()}
               variant="gradient"
               fullWidth
             >
-              Sign In
+              Đăng nhập
             </Button>
             <Typography variant="small" className="mt-6 flex justify-center">
-              Don't have an account?
+              Bạn không có tài khoản?
               <Typography
                 as="span"
                 variant="small"
                 color="blue"
                 className="ml-1 font-bold"
               >
-                Contact to admin
+               liên hệ người quản trị.
               </Typography>
             </Typography>
           </CardFooter>
