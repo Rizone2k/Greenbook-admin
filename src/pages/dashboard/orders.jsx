@@ -13,11 +13,23 @@ import { ordersSelector } from "@/redux/selectors";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { FaCheckCircle, FaPencilAlt, FaSearch, FaTimesCircle, FaTrashAlt } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaPencilAlt,
+  FaSearch,
+  FaTimesCircle,
+  FaTrashAlt,
+} from "react-icons/fa";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import { getOrders } from "@/redux/reducers/orders";
-import { InputLabel, MenuItem, OutlinedInput, Select, Stack } from "@mui/material";
+import {
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Stack,
+} from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CancelIcon from "@mui/icons-material/Cancel";
 import greenBookAPI from "@/api/greenBookAPI";
@@ -33,8 +45,7 @@ export function Orders() {
     onClick: () => setPage(index),
   });
 
-  const handleChangeStatus = async({id, status})=>{
-   
+  const handleChangeStatus = async ({ id, status }) => {
     const getListOrder = () => {
       dispatch(getOrders())
         .then(unwrapResult)
@@ -44,20 +55,25 @@ export function Orders() {
     };
     const debouncedSearch = debounce(getListOrder, 1000);
     try {
-      await greenBookAPI.updateStatusOrder(id,status)
+      await greenBookAPI.updateStatusOrder(id, status);
       debouncedSearch();
     } catch (error) {
       console.log(error.message);
     }
-    
-    
-  }
+  };
 
-  const Item = (props)=>{
-     const [showEdit, setShowEdit] = useState(false);
-     const [selected, setSelected] = useState('');
-     const data=[ "Mới", "Đang xác nhận","Đã xác nhận", "Đang vận chuyển","Thành công", "Thất bại"]
-    return(
+  const Item = (props) => {
+    const [showEdit, setShowEdit] = useState(false);
+    const [selected, setSelected] = useState("");
+    const data = [
+      "Mới",
+      "Đang xác nhận",
+      "Đã xác nhận",
+      "Đang vận chuyển",
+      "Thành công",
+      "Thất bại",
+    ];
+    return (
       <tr>
         <td className={props.className}>
           <div className="flex items-center gap-4">
@@ -95,56 +111,74 @@ export function Orders() {
           </Typography>
         </td>
         <td className={props.className}>
-          {showEdit? 
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={selected?selected: props?.status}
-            variant="outlined"
-            sx={{
-            height: 35,
-            }}
-            onChange={(event)=>setSelected(event.target.value)}
-          >
-            {data.map((e)=><MenuItem key={e}  className="text-sm" value={e}><small>{e}</small></MenuItem>)}
-          
-          </Select>
-        :
-          <Chip
-            variant="gradient"
-            color={
-              props?.status &&
-              props?.status == "Mới"
-                ? "blue"
-                : props?.status == "Thành công"
-                ? "green"
-                : "red"
-            }
-            value={props?.status ?? ""}
-            className="py-0.5 px-2 text-[11px] font-medium"
-          />}
+          {showEdit ? (
+            <Select
+              labelId="select-label"
+              id="select"
+              value={selected ? selected : props?.status}
+              variant="outlined"
+              sx={{
+                height: 35,
+              }}
+              onChange={(event) => setSelected(event.target.value)}
+            >
+              {data.map((e) => (
+                <MenuItem key={e} className="text-sm" value={e}>
+                  <small>{e}</small>
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Chip
+              variant="gradient"
+              color={
+                props?.status && props?.status == "Mới"
+                  ? "blue"
+                  : props?.status == "Thành công"
+                  ? "green"
+                  : "red"
+              }
+              value={props?.status ?? ""}
+              className="py-0.5 px-2 text-[11px] font-medium"
+            />
+          )}
         </td>
-        <td className={props.className} onClick={()=>setShowEdit(!showEdit)}>
-        {showEdit ?
-        <div className="flex gap-2"> 
-          <b className="cursor-pointer" onClick={()=>{handleChangeStatus({id:props?.id, status:selected}); setShowEdit(false)}}><FaCheckCircle className="text-[#03943b]"></FaCheckCircle></b>
-          <span className="cursor-pointer" onClick={()=>setShowEdit(false)}><FaTimesCircle className="text-[#941903]"></FaTimesCircle></span>
-        </div>: 
-          <Tippy content="Chỉnh sửa">
-            <span>
-              <Typography
-                variant="small"
-                as="a"
-                className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+        <td className={props.className} onClick={() => setShowEdit(!showEdit)}>
+          {showEdit ? (
+            <div className="flex gap-2">
+              <b
+                className="cursor-pointer"
+                onClick={() => {
+                  handleChangeStatus({ id: props?.id, status: selected });
+                  setShowEdit(false);
+                }}
               >
-                <FaPencilAlt></FaPencilAlt>
-              </Typography>
-            </span>
-          </Tippy>}
+                <FaCheckCircle className="text-[#03943b]"></FaCheckCircle>
+              </b>
+              <span
+                className="cursor-pointer"
+                onClick={() => setShowEdit(false)}
+              >
+                <FaTimesCircle className="text-[#941903]"></FaTimesCircle>
+              </span>
+            </div>
+          ) : (
+            <Tippy content="Sửa">
+              <span>
+                <Typography
+                  variant="small"
+                  as="p"
+                  className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+                >
+                  <FaPencilAlt></FaPencilAlt>
+                </Typography>
+              </span>
+            </Tippy>
+          )}
         </td>
       </tr>
-    )
-  }
+    );
+  };
 
   const next = () => {
     if (page === 5) return;
@@ -232,17 +266,19 @@ export function Orders() {
                   }`;
 
                   return (
-                    <Item 
-                    key={order?.order?.id}
-                    id={order?.order?.id}
-                    user={order?.user?.first_name + " " +order?.user?.last_name}
-                    className={className}
-                    created_at={order?.order?.created_at}
-                    total_price={order?.order?.total_price}
-                    items={order?.order?.items}
-                    status={order?.order?.status}
-                    ship_address={order?.user?.ship_address}
-                    default_address={order?.user?.default_address}
+                    <Item
+                      key={order?.order?.id}
+                      id={order?.order?.id}
+                      user={
+                        order?.user?.first_name + " " + order?.user?.last_name
+                      }
+                      className={className}
+                      created_at={order?.order?.created_at}
+                      total_price={order?.order?.total_price}
+                      items={order?.order?.items}
+                      status={order?.order?.status}
+                      ship_address={order?.user?.ship_address}
+                      default_address={order?.user?.default_address}
                     ></Item>
                   );
                 })}

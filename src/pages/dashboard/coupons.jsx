@@ -240,18 +240,6 @@ export function Coupons() {
                   </Button>
                 </span>
               </Tippy>
-              <Tippy content="Làm mới">
-                <span>
-                  <Button
-                    className="mr-2 rounded-2xl bg-[#0c9dd6] text-white"
-                    onClick={() => {
-                      setSignal(!signal);
-                    }}
-                  >
-                    <FaSyncAlt></FaSyncAlt>
-                  </Button>
-                </span>
-              </Tippy>
             </div>
             <table className="w-full min-w-[640px] table-auto">
               <thead>
