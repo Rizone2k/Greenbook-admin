@@ -150,12 +150,11 @@ export function Genres() {
                         </Typography>
                       </td>
                       <td className={className}>
-                        <Tippy content="Edit">
+                        <Tippy content="Sửa">
                           <span>
                             <Typography
                               variant="small"
-                              as="a"
-                              href="#"
+                              as="p"
                               className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
                             >
                               <FaPencilAlt></FaPencilAlt>

@@ -164,7 +164,7 @@ const greenBookAPI = {
     return instance.get(url);
   },
 
-  updateAuthor: (id, name, image) => {
+  updateAuthor: (id, name = "", image = "") => {
     const query = {
       ...(id && { authorId: id }),
     };
@@ -318,12 +318,11 @@ const greenBookAPI = {
 
   updateStatusOrder: (id, status) => {
     const query = {
-      ...(id && { orderId : id }),
+      ...(id && { orderId: id }),
     };
     const url = `/order_adminstatus?status=${status}&${queryString.stringify({
       ...query,
     })}`;
-    console.log("url",url);
     return instance.post(url);
   },
 
@@ -413,16 +412,16 @@ const greenBookAPI = {
     };
     return instance.put(url, JSON.stringify(requestData));
   },
-    // ~~~~~~~~~~~~~~Dashboard~~~~~~~~~~~~~~~~//
-    getDashboard: (day="7") => {
-      const query = {
-        ...(day && { day_filter : day }),
-      };
-      const url = `/dashboard_admin?${queryString.stringify({
-        ...query,
-      })}`;
-      return instance.get(url);
-    },
+  // ~~~~~~~~~~~~~~Dashboard~~~~~~~~~~~~~~~~//
+  getDashboard: (day = "7") => {
+    const query = {
+      ...(day && { day_filter: day }),
+    };
+    const url = `/dashboard_admin?${queryString.stringify({
+      ...query,
+    })}`;
+    return instance.get(url);
+  },
 };
 
 greenBookAPI.propTypes = {

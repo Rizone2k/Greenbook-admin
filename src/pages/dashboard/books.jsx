@@ -554,7 +554,7 @@ export function Books() {
                               );
                           }}
                         >
-                          <Tippy content="Edit">
+                          <Tippy content="Sửa">
                             <span>
                               <Typography
                                 variant="small"
@@ -570,7 +570,7 @@ export function Books() {
                           className={className}
                           onClick={() => handleDeleteBook(book.id)}
                         >
-                          <Tippy content="Delete">
+                          <Tippy content="Xoá">
                             <span>
                               <Typography
                                 variant="small"

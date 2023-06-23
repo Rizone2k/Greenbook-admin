@@ -56,26 +56,23 @@ export function Publishers() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {[
-                  "Nhà xuất bản",
-                  "Ngày tạo",
-                  "Đã xoá",
-                  "Ngày cập nhật",
-                ].map((el, index) => (
-                  <th
-                    key={index}
-                    className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
-                      el == "Thể loại" ? "hidden lg:block" : ""
-                    }`}
-                  >
-                    <Typography
-                      variant="small"
-                      className="text-[11px] font-bold uppercase text-blue-gray-400"
+                {["Nhà xuất bản", "Ngày tạo", "Đã xoá", "Ngày cập nhật"].map(
+                  (el, index) => (
+                    <th
+                      key={index}
+                      className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
+                        el == "Thể loại" ? "hidden lg:block" : ""
+                      }`}
                     >
-                      {el}
-                    </Typography>
-                  </th>
-                ))}
+                      <Typography
+                        variant="small"
+                        className="text-[11px] font-bold uppercase text-blue-gray-400"
+                      >
+                        {el}
+                      </Typography>
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
@@ -131,34 +128,6 @@ export function Publishers() {
             </tbody>
           </table>
         </CardBody>
-        {/* <div className="flex items-center justify-end  gap-4">
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center gap-2"
-            onClick={prev}
-            disabled={page === 1}
-          >
-            <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
-          </Button>
-          <div className="flex items-center gap-2">
-            <IconButton {...getItemProps(1)}>1</IconButton>
-            <IconButton {...getItemProps(2)}>2</IconButton>
-            <IconButton {...getItemProps(3)}>3</IconButton>
-            <IconButton {...getItemProps(4)}>4</IconButton>
-            <IconButton {...getItemProps(5)}>5</IconButton>
-          </div>
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center gap-2"
-            onClick={next}
-            disabled={page === 5}
-          >
-            Next
-            <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
-          </Button>
-        </div> */}
       </Card>
     </div>
   );

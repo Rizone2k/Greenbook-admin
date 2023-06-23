@@ -101,9 +101,9 @@ export function Orders() {
             id="demo-simple-select"
             value={selected?selected: props?.status}
             variant="outlined"
-    sx={{
-    height: 35,
-    }}
+            sx={{
+            height: 35,
+            }}
             onChange={(event)=>setSelected(event.target.value)}
           >
             {data.map((e)=><MenuItem key={e}  className="text-sm" value={e}><small>{e}</small></MenuItem>)}
