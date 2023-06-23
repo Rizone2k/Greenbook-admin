@@ -71,15 +71,6 @@ export function Authors() {
     }
   };
 
-  const getListAuthor = () => {
-    let row = "20";
-    dispatch(getAuthors({ limit: row, page: page }))
-      .then(unwrapResult)
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const handleClearOldData = () => {
     setName("");
   };
@@ -137,7 +128,7 @@ export function Authors() {
       }
     } else {
       setColor("#980303");
-      notify("Vui lòng kiểm tra lại số lượng!");
+      notify("Vui lòng kiểm tra lại!");
     }
   };
 
@@ -153,6 +144,15 @@ export function Authors() {
       className: "text-sm font-bold",
       theme: "light",
     });
+
+  const getListAuthor = () => {
+    let row = "20";
+    dispatch(getAuthors({ limit: row, page: page }))
+      .then(unwrapResult)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     getListAuthor();

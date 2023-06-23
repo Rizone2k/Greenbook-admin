@@ -33,5 +33,51 @@ export const getGenres = createAsyncThunk(
     }
   }
 );
+export const createGenre = createAsyncThunk(
+  "books/createGenre",
+  async ({ name = "", description = "" }) => {
+    try {
+      const res = await greenBookAPI.createGenre(name, description);
+      console.log(res.data);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const updateGenre = createAsyncThunk(
+  "books/updateGenre",
+  async ({ id = "", name = "", description = "" }) => {
+    try {
+      const res = await greenBookAPI.updateGenre(id, name, description);
+      console.log(res.data);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const deleteGenre = createAsyncThunk(
+  "books/deleteGenre",
+  async ({ id }) => {
+    try {
+      const res = await greenBookAPI.deleteGenre(id);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
 
 export default genresSlice;
