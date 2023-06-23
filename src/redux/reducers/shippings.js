@@ -30,5 +30,43 @@ export const getShippings = createAsyncThunk("books/getShippings", async () => {
     throw error;
   }
 });
+export const createShipping = createAsyncThunk(
+  "books/createShippings",
+  async ({ price = "0", fromWeight = "0", toWeight = "0" }) => {
+    try {
+      const res = await greenBookAPI.createShippingFee(
+        price,
+        fromWeight,
+        toWeight
+      );
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const updateShipping = createAsyncThunk(
+  "books/updateShipping",
+  async ({ id, price = "0", fromWeight = "0", toWeight = "0" }) => {
+    try {
+      const res = await greenBookAPI.updateShippingFee(
+        id,
+        price,
+        fromWeight,
+        toWeight
+      );
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
 
 export default shippingsSlice;

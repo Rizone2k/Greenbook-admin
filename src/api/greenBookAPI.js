@@ -332,7 +332,7 @@ const greenBookAPI = {
     return instance.get(url);
   },
 
-  createShippingFee: (fromWeight = "0", toWeight = "1", price = "0") => {
+  createShippingFee: (price = "0", fromWeight = "0", toWeight = "1") => {
     const query = {
       ...(fromWeight && { from_weight: fromWeight }),
       ...(toWeight && { to_weight: toWeight }),
@@ -344,7 +344,7 @@ const greenBookAPI = {
     return instance.post(url);
   },
 
-  updateShippingFee: (id, fromWeight = "0", toWeight = "1", price = "0") => {
+  updateShippingFee: (id, price = "0", fromWeight = "0", toWeight = "1") => {
     const query = {
       ...(id && { shippingId: id }),
     };
