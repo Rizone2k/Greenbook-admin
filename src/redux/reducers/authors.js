@@ -33,6 +33,7 @@ export const getAuthors = createAsyncThunk(
     }
   }
 );
+
 export const createAuthor = createAsyncThunk(
   "books/createAuthor",
   async ({ name = "", image = "" }) => {
