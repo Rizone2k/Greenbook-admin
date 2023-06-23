@@ -16,10 +16,6 @@ const authorsSlice = createSlice({
       .addCase(getAuthors.rejected, (state, action) => {
         state.status = "error";
       });
-    // .addCase(getAuthor.fulfilled, (state, action) => {
-    //   state.data = action.payload;
-    //   state.status = "idle";
-    // });
   },
 });
 
@@ -37,19 +33,51 @@ export const getAuthors = createAsyncThunk(
     }
   }
 );
-// export const getAuthor = createAsyncThunk(
-//   "books/getAuthor",
-//   async ({ id, name }) => {
-//     try {
-//       const res = await greenBookAPI.getAuthor(id, name);
-//       if (res.status === 200) {
-//         const result = res.data;
-//         return result.data;
-//       }
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
-// );
+export const createAuthor = createAsyncThunk(
+  "books/createAuthor",
+  async ({ name = "", image = "" }) => {
+    try {
+      const res = await greenBookAPI.createAuthor(name, image);
+      console.log(res.data);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const updateAuthor = createAsyncThunk(
+  "books/updateAuthor",
+  async ({ id = "", name = "", image = "" }) => {
+    try {
+      const res = await greenBookAPI.updateAuthor(id, name, image);
+      console.log(res.data);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const deleteAuthor = createAsyncThunk(
+  "books/deleteAuthor",
+  async ({ id }) => {
+    try {
+      const res = await greenBookAPI.deleteAuthor(id, name);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
 
 export default authorsSlice;

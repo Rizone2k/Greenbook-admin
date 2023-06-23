@@ -50,7 +50,6 @@ export const createCoupon = createAsyncThunk(
         isPercent,
         expiredAt
       );
-      console.log(res.data);
       if (res.status === 200) {
         const result = res.data;
         return result.data;
@@ -60,6 +59,7 @@ export const createCoupon = createAsyncThunk(
     }
   }
 );
+
 export const updateCoupon = createAsyncThunk(
   "books/updateCoupon",
   async ({
@@ -81,7 +81,6 @@ export const updateCoupon = createAsyncThunk(
         isPercent,
         expiredAt
       );
-      console.log(res.data);
       if (res.status === 200) {
         const result = res.data;
         return result.data;

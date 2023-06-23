@@ -38,6 +38,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { InputLabel } from "@mui/material";
+import { debounce } from "lodash";
 
 export function Coupons() {
   const coupons = useSelector(couponsSelector);
@@ -75,6 +76,7 @@ export function Coupons() {
   };
 
   const handleCreateCoupon = () => {
+    const debouncedCoupon = debounce(getListCoupon, 1000);
     if (
       (isPercent === false && parseInt(amount) >= 1000) ||
       (isPercent === true && parseInt(amount) <= 100)
@@ -99,6 +101,7 @@ export function Coupons() {
             console.log(err);
             notify(err.message);
           });
+        debouncedCoupon();
       } else {
         setColor("#980303");
         notify("Vui lòng kiểm tra lại thông tin!");
@@ -128,6 +131,7 @@ export function Coupons() {
   };
 
   const handleUpdateCoupon = () => {
+    const debouncedCoupon = debounce(getListCoupon, 1000);
     if (
       (isPercent === false && parseInt(amount) >= 1000) ||
       (isPercent === true && parseInt(amount) <= 100)
@@ -153,6 +157,7 @@ export function Coupons() {
             console.log(err);
             notify(err.message);
           });
+        debouncedCoupon();
       } else {
         setColor("#980303");
         notify("Vui lòng kiểm tra lại thông tin!");
@@ -176,14 +181,15 @@ export function Coupons() {
       theme: "light",
     });
 
+  const getListCoupon = () => {
+    dispatch(getCoupons())
+      .then(unwrapResult)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
-    const getListCoupon = () => {
-      dispatch(getCoupons())
-        .then(unwrapResult)
-        .catch((err) => {
-          console.log(err);
-        });
-    };
     getListCoupon();
   }, [signal]);
 
@@ -341,12 +347,11 @@ export function Coupons() {
                               );
                           }}
                         >
-                          <Tippy content="Edit">
+                          <Tippy content="Sửa">
                             <span>
                               <Typography
                                 variant="small"
-                                as="a"
-                                href="#"
+                                as="p"
                                 className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
                               >
                                 <FaPencilAlt></FaPencilAlt>
