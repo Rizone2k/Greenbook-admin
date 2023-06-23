@@ -55,7 +55,6 @@ export const updateAuthor = createAsyncThunk(
   async ({ id = "", name = "", image = "" }) => {
     try {
       const res = await greenBookAPI.updateAuthor(id, name, image);
-      console.log(res.data);
       if (res.status === 200) {
         const result = res.data;
         return result.data;
@@ -70,7 +69,7 @@ export const deleteAuthor = createAsyncThunk(
   "books/deleteAuthor",
   async ({ id }) => {
     try {
-      const res = await greenBookAPI.deleteAuthor(id, name);
+      const res = await greenBookAPI.deleteAuthor(id);
       if (res.status === 200) {
         const result = res.data;
         return result.data;
