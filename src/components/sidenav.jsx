@@ -15,7 +15,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/reducers/auth";
 import { unwrapResult } from "@reduxjs/toolkit";
 export function Sidenav({ brandImg, brandName, routes }) {
-  // console.log(routes);
   const [controller, dispatch] = useMaterialTailwindController();
   const dispatchRedux = useDispatch();
   const navigate = useNavigate();
@@ -30,7 +29,6 @@ export function Sidenav({ brandImg, brandName, routes }) {
     dispatchRedux(logout())
       .then(unwrapResult)
       .catch((err) => console.log(err));
-    console.log("oke");
     navigate("/auth/sign-in");
   };
 
@@ -38,7 +36,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
     <aside
       className={`${sidenavTypes[sidenavType]} ${
         openSidenav ? "translate-x-0" : "-translate-x-80"
-      } z fixed overflow-auto inset-0 z-10 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0`}
+      } z fixed inset-0 z-10 my-4 ml-4 h-[calc(100vh-32px)] w-72 overflow-auto rounded-xl transition-transform duration-300 xl:translate-x-0`}
     >
       <div
         className={`relative border-b ${
@@ -78,7 +76,9 @@ export function Sidenav({ brandImg, brandName, routes }) {
                 {name == "Đăng xuất" ? (
                   <div>
                     <Button
-                      onClick={()=>{handleLogOutClick()}}
+                      onClick={() => {
+                        handleLogOutClick();
+                      }}
                       variant={"text"}
                       color={"blue-gray"}
                       className="flex items-center gap-4 px-4 capitalize"

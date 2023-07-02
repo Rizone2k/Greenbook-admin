@@ -1,27 +1,66 @@
+import greenBookAPI from "@/api/greenBookAPI";
 import { chartsConfig } from "@/configs";
-const websiteViewsChart = {
-  type: "bar",
-  height: 220,
-  series: [
-    {
-      name: "Views",
-      data: [50, 20, 10, 22, 50, 10, 40],
-    },
-  ],
-  options: {
-    ...chartsConfig,
-    colors: "#fff",
-    plotOptions: {
-      bar: {
-        columnWidth: "16%",
-        borderRadius: 5,
+import { dashboardSelector } from "@/redux/selectors";
+import { useSelector } from "react-redux";
+const fetchData = async () => {
+  try {
+    const res = await greenBookAPI.getDashboard();
+    if (res.status === 200) {
+      const result = res.data;
+      return result.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+  console.log("res", res);
+  return res.data.data;
+};
+
+const view = () => {
+  let dataPerDay;
+
+  const getDataPerDay = async (callback) => {
+    try {
+      const result = await fetchData();
+      dataPerDay = result;
+      callback(dataPerDay);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDataPerDay = (data) => {
+    console.log("dataPerDay.lsalary", data?.lsalary);
+    // Xử lý giá trị mới của dataPerDay ở đây
+  };
+
+  getDataPerDay(handleDataPerDay);
+  const websiteViewsChart = {
+    type: "bar",
+    height: 220,
+    series: [
+      {
+        name: "Views",
+        data: [dataPerDay?.lsalary ?? 20, 20, 10, 22, 50, 10, 40],
+      },
+    ],
+    options: {
+      ...chartsConfig,
+      colors: "#fff",
+      plotOptions: {
+        bar: {
+          columnWidth: "16%",
+          borderRadius: 5,
+        },
+      },
+      xaxis: {
+        ...chartsConfig.xaxis,
+        categories: ["M", "T", "W", "T", "F", "S", "S"],
       },
     },
-    xaxis: {
-      ...chartsConfig.xaxis,
-      categories: ["M", "T", "W", "T", "F", "S", "S"],
-    },
-  },
+  };
+
+  return websiteViewsChart;
 };
 
 const dailySalesChart = {
@@ -59,13 +98,14 @@ const completedTasksChart = {
   ],
 };
 
+const dataView = view();
 export const statisticsChartsData = [
   {
     color: "blue",
     title: "Lượt truy cập",
     description: "Người dùng tiềm năng",
     footer: "Cập nhật 10 phút trước",
-    chart: websiteViewsChart,
+    chart: dataView,
   },
   {
     color: "green",
