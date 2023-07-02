@@ -7,18 +7,17 @@ import {
 import { dashboardSelector } from "@/redux/selectors";
 import { useSelector } from "react-redux";
 
-
-export const statisticsCardsData = ()=>{
+export const statisticsCardsData = () => {
   const dashboardData = useSelector(dashboardSelector);
-  return([
+  return [
     {
       color: "blue",
       icon: CurrencyDollarIcon,
       title: "Doanh thu sách",
-      value:`${(dashboardData?.lsalary)?.toLocaleString()}đ`,
+      value: `${dashboardData?.salary?.toLocaleString()}đ`,
       footer: {
         color: "text-green-500",
-        value: "+25%",
+        value: "+15%",
         label: "so với tuần trước",
       },
     },
@@ -35,7 +34,7 @@ export const statisticsCardsData = ()=>{
     },
     {
       color: "green",
-      icon: BookOpenIcon ,
+      icon: BookOpenIcon,
       title: "Số đầu sách",
       value: `${dashboardData?.nbooks}`,
       footer: {
@@ -55,8 +54,7 @@ export const statisticsCardsData = ()=>{
         label: "so với tuần trước",
       },
     },
-  ])
-}
-
+  ];
+};
 
 export default statisticsCardsData;

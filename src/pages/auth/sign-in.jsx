@@ -46,7 +46,7 @@ export function SignIn() {
         notify(currentUser);
       }
     };
-   checkError();
+    checkError();
   }, [middle]);
 
   // alert
@@ -102,7 +102,7 @@ export function SignIn() {
             className="mb-4 grid h-28 place-items-center"
           >
             <Typography variant="h3" color="white">
-           Đăng nhập
+              Đăng nhập
             </Typography>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
@@ -132,14 +132,14 @@ export function SignIn() {
               size="lg"
               required
             />
-            <div className="-ml-2.5">
-              <Checkbox label="Nhớ tôi" />
+            <div className="-ml-2.5 text-xs">
+              <Checkbox label="Lưu mật khẩu" />
             </div>
           </CardBody>
           <CardFooter className="pt-0">
             <Button
               type="submit"
-              onClick={()=>handleLogin()}
+              onClick={() => handleLogin()}
               variant="gradient"
               fullWidth
             >
@@ -153,7 +153,7 @@ export function SignIn() {
                 color="blue"
                 className="ml-1 font-bold"
               >
-               liên hệ người quản trị.
+                liên hệ người quản trị.
               </Typography>
             </Typography>
           </CardFooter>
