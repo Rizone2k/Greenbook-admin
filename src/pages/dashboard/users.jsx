@@ -24,7 +24,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 import { useDispatch, useSelector } from "react-redux";
-import { usersSelector } from "@/redux/selectors";
+import { currentUserSelector, usersSelector } from "@/redux/selectors";
 import { useEffect, useRef, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
@@ -121,6 +121,7 @@ const MultiSelect = (props) => {
 export function Users() {
   const [page, setPage] = useState(1);
   const users = useSelector(usersSelector);
+  const currentUser = useSelector(currentUserSelector);
   const dispatch = useDispatch();
   const [color, setColor] = useState("#980303");
   const listRole = useRef([]);
@@ -270,60 +271,64 @@ export function Users() {
             </Typography>
           )}
         </td>
-        <td
-          className={props.className}
-          onClick={() => {
-            handleShowEdit();
-            setIdMiddle(props.id);
-          }}
-        >
-          {showEdit ? (
-            <div className="flex gap-2">
-              <b
-                className="cursor-pointer"
-                onClick={() => {
-                  handleUpdateUserRole();
-                }}
-              >
-                <FaCheckCircle className="text-[#03943b]"></FaCheckCircle>
-              </b>
-              <span
-                className="cursor-pointer"
-                onClick={() => setShowEdit(false)}
-              >
-                <FaTimesCircle className="text-[#941903]"></FaTimesCircle>
-              </span>
-            </div>
-          ) : (
-            <Tippy content="Sửa">
+        {currentUser.roles.some((e) => e.includes("superadmin")) && (
+          <td
+            className={props.className}
+            onClick={() => {
+              handleShowEdit();
+              setIdMiddle(props.id);
+            }}
+          >
+            {showEdit ? (
+              <div className="flex gap-2">
+                <b
+                  className="cursor-pointer"
+                  onClick={() => {
+                    handleUpdateUserRole();
+                  }}
+                >
+                  <FaCheckCircle className="text-[#03943b]"></FaCheckCircle>
+                </b>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => setShowEdit(false)}
+                >
+                  <FaTimesCircle className="text-[#941903]"></FaTimesCircle>
+                </span>
+              </div>
+            ) : (
+              <Tippy content="Sửa">
+                <span>
+                  <Typography
+                    variant="small"
+                    as="p"
+                    className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+                  >
+                    <FaPencilAlt></FaPencilAlt>
+                  </Typography>
+                </span>
+              </Tippy>
+            )}
+          </td>
+        )}
+        {currentUser.roles.some((e) => e.includes("superadmin")) && (
+          <td
+            className={props.className}
+            onClick={() => handleDeleteUser(props.id)}
+          >
+            <Tippy content="Xoá">
               <span>
                 <Typography
                   variant="small"
                   as="p"
-                  className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+                  className="flex items-center justify-center text-xs font-semibold text-red-400"
                 >
-                  <FaPencilAlt></FaPencilAlt>
+                  <FaTrashAlt></FaTrashAlt>
                 </Typography>
               </span>
             </Tippy>
-          )}
-        </td>
-        <td
-          className={props.className}
-          onClick={() => handleDeleteUser(props.id)}
-        >
-          <Tippy content="Xoá">
-            <span>
-              <Typography
-                variant="small"
-                as="p"
-                className="flex items-center justify-center text-xs font-semibold text-red-400"
-              >
-                <FaTrashAlt></FaTrashAlt>
-              </Typography>
-            </span>
-          </Tippy>
-        </td>
+          </td>
+        )}
       </tr>
     );
   };
