@@ -12,9 +12,9 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     config.headers["Access-Control-Allow-Origin"] = "*";
+    config.headers["Access-Control-Allow-Credentials"] = "true";
     config.headers["Access-Control-Allow-Methods"] =
       "GET, PUT, DELETE, PATCH, OPTIONS";
-    config.headers["Content-Type"] = "application/json";
     const access_token = Cookies.get("access_token");
     if (access_token) {
       config.headers.Authorization = `Bearer ${access_token}`;
@@ -35,7 +35,7 @@ instance.interceptors.response.use(
     if (statusCode === 401) {
       Cookies.set("LOGGED", false);
       alert("Phiên đã hết hạn, vui lòng đăng nhập lại!") &&
-        navigate("/log-out");
+        navigate("/auth/sign-in");
     } else {
       throw error;
     }

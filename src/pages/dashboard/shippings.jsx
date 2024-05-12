@@ -10,90 +10,63 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { authorsSelector } from "@/redux/selectors";
+import { shippingsSelector } from "@/redux/selectors";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { FaPencilAlt, FaPlus, FaSearch, FaTrashAlt } from "react-icons/fa";
-import {
-  createAuthor,
-  deleteAuthor,
-  getAuthors,
-  updateAuthor,
-} from "@/redux/reducers/authors";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+import {
+  createShipping,
+  getShippings,
+  updateShipping,
+} from "@/redux/reducers/shippings";
 import { debounce } from "lodash";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export function Authors() {
+export function Shippings() {
   const [page, setPage] = useState(1);
-  const authors = useSelector(authorsSelector);
+  const shippings = useSelector(shippingsSelector);
   const dispatch = useDispatch();
   const [showCreate, setShowCreate] = useState(false);
   const [color, setColor] = useState("#980303");
 
-  const [name, setName] = useState("");
-  const [authorId, setAuthorId] = useState("");
-
-  const getItemProps = (index) => ({
-    variant: page === index ? "filled" : "text",
-    color: page === index ? "blue" : "blue-gray",
-    onClick: () => setPage(index),
-  });
-
-  const next = () => {
-    if (page === 5) return;
-
-    setPage(page + 1);
-  };
-
-  const prev = () => {
-    if (page === 1) return;
-
-    setPage(page - 1);
-  };
+  const [price, setPrice] = useState("");
+  const [fromWeight, setFromWeight] = useState("");
+  const [toWeight, setToWeight] = useState("");
+  const [shippingId, setShippingId] = useState("");
 
   const handleShowCreate = () => {
     setShowCreate(!showCreate);
   };
 
-  const handleDeleteAuthor = async (id) => {
-    const debouncedAuthor = debounce(getListAuthor, 1000);
-    try {
-      await dispatch(deleteAuthor({ id }));
-      notify("Đang xoá!");
-      debouncedAuthor();
-    } catch (error) {
-      console.log(error.message);
-      notify(error.message);
-    }
-  };
-
   const handleClearOldData = () => {
-    setName("");
+    setPrice("");
+    setFromWeight("");
+    setToWeight("");
   };
 
-  const handleClickCreateAuthor = () => {
+  const handleClickCreateShipping = () => {
     handleClearOldData();
-    setAuthorId("");
+    setShippingId("");
     setShowCreate(!showCreate);
   };
 
-  const handleCreateAuthor = () => {
-    const debouncedAuthorCreate = debounce(getListAuthor, 1000);
-    if (name.length > 1) {
+  const handleCreateShipping = () => {
+    const debouncedShippingCreate = debounce(getListShipping, 1000);
+    if (parseInt(price) > 1) {
       try {
         setShowCreate(false);
         dispatch(
-          createAuthor({
-            name: name,
-            img: "",
+          createShipping({
+            price: price,
+            fromWeight: fromWeight,
+            toWeight: toWeight,
           })
         ).then(notify("Đã tạo!"));
         handleClearOldData();
-        debouncedAuthorCreate();
+        debouncedShippingCreate();
       } catch (error) {
         console.log(error.message);
       }
@@ -103,26 +76,29 @@ export function Authors() {
     }
   };
 
-  const handleClickUpdateAuthor = (name, id) => {
-    setName(name);
-    setAuthorId(id);
+  const handleClickUpdateShipping = (id, price, fromWeight, toWeight) => {
+    setPrice(price);
+    setFromWeight(fromWeight);
+    setToWeight(toWeight);
+    setShippingId(id);
   };
 
-  const handleUpdateAuthor = () => {
-    const debouncedAuthorUpdate = debounce(getListAuthor, 1000);
-    if (name.length > 1 && authorId) {
+  const handleUpdateShipping = () => {
+    const debouncedShippingUpdate = debounce(getListShipping, 1000);
+    if (parseInt(price) > 1 && shippingId) {
       try {
         setShowCreate(false);
         dispatch(
-          updateAuthor({
-            id: authorId,
-            name: name,
-            image: "",
+          updateShipping({
+            id: shippingId,
+            price: price,
+            fromWeight: fromWeight,
+            toWeight: toWeight,
           })
         );
         notify("Đã cập nhật!");
         handleClearOldData();
-        debouncedAuthorUpdate();
+        debouncedShippingUpdate();
       } catch (error) {
         console.log(error.message);
       }
@@ -145,9 +121,8 @@ export function Authors() {
       theme: "light",
     });
 
-  const getListAuthor = () => {
-    let row = "20";
-    dispatch(getAuthors({ limit: row, page: page }))
+  const getListShipping = () => {
+    dispatch(getShippings())
       .then(unwrapResult)
       .catch((err) => {
         console.log(err);
@@ -155,8 +130,8 @@ export function Authors() {
   };
 
   useEffect(() => {
-    getListAuthor();
-  }, [page]);
+    getListShipping();
+  }, []);
 
   return (
     <>
@@ -175,7 +150,7 @@ export function Authors() {
             className="mb-8 flex w-full items-center gap-10 p-6"
           >
             <Typography variant="h5" color="white">
-              Tác giả
+              Phí Vận chuyển
             </Typography>
             <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
               <input
@@ -197,7 +172,7 @@ export function Authors() {
                   <Button
                     className="mr-2 rounded-2xl bg-[#0c9dd6] text-white"
                     onClick={() => {
-                      handleClickCreateAuthor();
+                      handleClickCreateShipping();
                       handleShowCreate();
                     }}
                   >
@@ -210,17 +185,17 @@ export function Authors() {
               <thead>
                 <tr>
                   {[
-                    "Tác giả",
-                    "Ngày tạo",
-                    "Đã xoá",
+                    "Mã vận chuyển",
+                    "Trọng lượng tối thiểu",
+                    "Trọng lượng tối đa",
+                    "Giá",
                     "Ngày cập nhật",
-                    "",
                     "",
                   ].map((el, index) => (
                     <th
                       key={index}
                       className={`border-b border-blue-gray-50 py-3 px-5 text-left ${
-                        el == "Ngày tạo" ? "hidden lg:block" : ""
+                        el == "Ngày cập nhật" ? "hidden lg:block" : ""
                       }`}
                     >
                       <Typography
@@ -234,16 +209,16 @@ export function Authors() {
                 </tr>
               </thead>
               <tbody>
-                {authors &&
-                  authors.map((author, key) => {
-                    const className = `py-3 px-5 ${
-                      key === authors.length - 1
+                {shippings &&
+                  shippings.map((shipping, key) => {
+                    const className = `p-1 xl:py-2 xl:px-4 ${
+                      key === shippings.length - 1
                         ? ""
                         : "border-b border-blue-gray-50"
                     }`;
 
                     return (
-                      <tr key={author.id}>
+                      <tr key={shipping.id}>
                         <td className={className}>
                           <div className="flex items-center gap-4">
                             <div>
@@ -252,40 +227,41 @@ export function Authors() {
                                 color="blue-gray"
                                 className="font-semibold"
                               >
-                                {author.name}
+                                {shipping.id}
                               </Typography>
                             </div>
                           </div>
                         </td>
-                        <td className={`${className} hidden lg:block`}>
+                        <td className={className}>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {author?.created_at ?? ""}
+                            {shipping.from_weight}
                           </Typography>
-                        </td>
-                        <td className={`${className}`}>
-                          <Chip
-                            variant="gradient"
-                            color={
-                              author.is_deleted && author.is_deleted == false
-                                ? "red"
-                                : "green"
-                            }
-                            value={JSON.stringify(author.is_deleted)}
-                            className="py-0.5 px-2 text-[11px] font-medium"
-                          />
                         </td>
                         <td className={className}>
                           <Typography className="text-xs font-semibold text-blue-gray-600">
-                            {author.updated_at}
+                            {shipping.to_weight}
                           </Typography>
                         </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {shipping.price.toLocaleString()}
+                          </Typography>
+                        </td>
+                        <td className={`${className} hidden lg:block`}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {shipping.updated_at}
+                          </Typography>
+                        </td>
+
                         <td
                           className={className}
                           onClick={() => {
                             handleShowCreate(),
-                              handleClickUpdateAuthor(
-                                author?.name ?? "",
-                                author?.id ?? ""
+                              handleClickUpdateShipping(
+                                shipping?.id ?? "",
+                                shipping?.price ?? "",
+                                shipping?.from_weight ?? "",
+                                shipping?.to_weight ?? ""
                               );
                           }}
                         >
@@ -301,59 +277,15 @@ export function Authors() {
                             </span>
                           </Tippy>
                         </td>
-                        <td
-                          className={className}
-                          onClick={() => handleDeleteAuthor(author.id)}
-                        >
-                          <Tippy content="Xoá">
-                            <span>
-                              <Typography
-                                variant="small"
-                                as="p"
-                                className="flex items-center justify-center text-xs font-semibold text-red-400"
-                              >
-                                <FaTrashAlt></FaTrashAlt>
-                              </Typography>
-                            </span>
-                          </Tippy>
-                        </td>
                       </tr>
                     );
                   })}
               </tbody>
             </table>
           </CardBody>
-          <div className="flex items-center justify-end  gap-4">
-            <Button
-              variant="text"
-              color="blue-gray"
-              className="flex items-center gap-2"
-              onClick={prev}
-              disabled={page === 1}
-            >
-              <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
-            </Button>
-            <div className="flex items-center gap-2">
-              <IconButton {...getItemProps(1)}>1</IconButton>
-              <IconButton {...getItemProps(2)}>2</IconButton>
-              <IconButton {...getItemProps(3)}>3</IconButton>
-              <IconButton {...getItemProps(4)}>4</IconButton>
-              <IconButton {...getItemProps(5)}>5</IconButton>
-            </div>
-            <Button
-              variant="text"
-              color="blue-gray"
-              className="flex items-center gap-2"
-              onClick={next}
-              disabled={page === 5}
-            >
-              Next
-              <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
-            </Button>
-          </div>
         </Card>
       </div>
-      {authors && showCreate && (
+      {shippings && showCreate && (
         <>
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden">
             <div className=" relative my-6 w-[100vw]">
@@ -375,20 +307,32 @@ export function Authors() {
                     <div
                       className={`w-full rounded-2xl p-1 text-sm shadow-md shadow-[#bedcd7e1] sm:w-2/3 lg:p-5 ${"sm:w-full"}`}
                     >
-                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                        <img
-                          className="mx-auto transition-transform duration-500 hover:scale-105"
-                          width={200}
-                          src={"/img/logo-ct.png"}
-                          alt={"Author"}
+                      <div className="flex items-center p-2">
+                        <Input
+                          onChange={(e) => setPrice(e.target.value)}
+                          value={price}
+                          type="number"
+                          variant="standard"
+                          label="1. Giá"
                         />
+                      </div>
+                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                         <div className="flex items-center p-2">
                           <Input
-                            onChange={(e) => setName(e.target.value)}
-                            value={name}
-                            type="text"
+                            onChange={(e) => setFromWeight(e.target.value)}
+                            value={fromWeight}
+                            type="number"
                             variant="standard"
-                            label="Tên tác giả"
+                            label="2. Trọng lượng tối thiểu (gram)"
+                          />
+                        </div>
+                        <div className="flex items-center p-2">
+                          <Input
+                            onChange={(e) => setToWeight(e.target.value)}
+                            value={toWeight}
+                            type="number"
+                            variant="standard"
+                            label="3. Trọng lượng tối đa (gram)"
                           />
                         </div>
                       </div>
@@ -398,9 +342,9 @@ export function Authors() {
                           <Button
                             type={"submit"}
                             onClick={() =>
-                              authorId
-                                ? handleUpdateAuthor()
-                                : handleCreateAuthor()
+                              shippingId
+                                ? handleUpdateShipping()
+                                : handleCreateShipping()
                             }
                             className="text-md font-base md:text-md bg-[#0bcaca] p-2 text-white shadow-md shadow-[#5f5e5eb5] hover:shadow-none"
                           >
@@ -421,4 +365,4 @@ export function Authors() {
   );
 }
 
-export default Authors;
+export default Shippings;

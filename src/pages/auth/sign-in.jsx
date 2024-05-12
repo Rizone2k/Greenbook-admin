@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { login } from "@/redux/reducers/auth";
+import { currentUserSelector, isLoggedInSelector } from "@/redux/selectors";
 import {
   Card,
   CardHeader,
@@ -9,10 +10,85 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 export function SignIn() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [color, setColor] = useState("#980303");
+  const [middle, setMiddle] = useState(true);
+  const currentUser = useSelector(currentUserSelector);
+  const isLoggedIn = useSelector(isLoggedInSelector);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkError = () => {
+      if (currentUser?.firstName && currentUser?.lastName) {
+        if (currentUser?.roles.includes("publisher")) {
+          navigate("/dashboard/books");
+        } else {
+          navigate("/dashboard/home");
+        }
+      } else if (
+        currentUser === "User is not verified. Email re-confirmed is sent"
+      ) {
+        setColor("#980303");
+        notify(currentUser);
+      } else if (currentUser.length > 0) {
+        setColor("#980303");
+        notify(currentUser);
+      }
+    };
+    checkError();
+  }, [middle]);
+
+  // alert
+  const notify = (content) =>
+    toast(`🦄 ${content}`, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      className: "text-sm font-bold",
+      theme: "light",
+    });
+
+  const handleLogin = () => {
+    if (email.length > 3 && password.length > 3) {
+      const user = {
+        email: email,
+        password: password,
+      };
+      dispatch(login(user))
+        .then(unwrapResult)
+        .then(() => setMiddle(!middle))
+        .catch((err) => {
+          notify(err.message);
+        });
+    } else {
+      notify(`Vui lòng kiểm tra lại thông tin!`);
+    }
+  };
+
   return (
     <>
+      <ToastContainer
+        toastStyle={{
+          backgroundColor: "#b8fcf6ea",
+          color: color,
+          marginTop: "10vh",
+        }}
+      />
       <img
         src="https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80"
         className="absolute inset-0 z-0 h-full w-full object-cover"
@@ -26,29 +102,58 @@ export function SignIn() {
             className="mb-4 grid h-28 place-items-center"
           >
             <Typography variant="h3" color="white">
-              Sign In
+              Đăng nhập
             </Typography>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
-            <Input type="email" label="Email" size="lg" />
-            <Input type="password" label="Password" size="lg" />
-            <div className="-ml-2.5">
-              <Checkbox label="Remember Me" />
+            <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleLogin();
+                }
+              }}
+              type="email"
+              label="Email"
+              size="lg"
+              required
+            />
+            <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleLogin();
+                }
+              }}
+              type="password"
+              label="Password"
+              size="lg"
+              required
+            />
+            <div className="-ml-2.5 text-xs">
+              <Checkbox label="Lưu mật khẩu" />
             </div>
           </CardBody>
           <CardFooter className="pt-0">
-            <Button variant="gradient" fullWidth>
-              Sign In
+            <Button
+              type="submit"
+              onClick={() => handleLogin()}
+              variant="gradient"
+              fullWidth
+            >
+              Đăng nhập
             </Button>
             <Typography variant="small" className="mt-6 flex justify-center">
-              Don't have an account?
+              Bạn không có tài khoản?
               <Typography
                 as="span"
                 variant="small"
                 color="blue"
                 className="ml-1 font-bold"
               >
-                Contact to admin
+                liên hệ người quản trị.
               </Typography>
             </Typography>
           </CardFooter>

@@ -7,21 +7,34 @@ import {
   Chip,
   Button,
   IconButton,
+  Input,
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
-import { authorsSelector } from "@/redux/selectors";
+import { genresSelector } from "@/redux/selectors";
 import { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { FaSearch } from "react-icons/fa";
-import { getAuthors } from "@/redux/reducers/authors";
+import { FaPencilAlt, FaPlus, FaSearch, FaTrashAlt } from "react-icons/fa";
+import {
+  createGenre,
+  deleteGenre,
+  getGenres,
+  updateGenre,
+} from "@/redux/reducers/genres";
+import Tippy from "@tippyjs/react";
+import { debounce } from "lodash";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function Genres() {
   const [page, setPage] = useState(1);
-  const authors = useSelector(authorsSelector);
+  const genres = useSelector(genresSelector);
   const dispatch = useDispatch();
+  const [showCreate, setShowCreate] = useState(false);
+  const [color, setColor] = useState("#980303");
 
-  console.log(authors);
+  const [name, setName] = useState("");
+  const [genreId, setGenreId] = useState("");
 
   const getItemProps = (index) => ({
     variant: page === index ? "filled" : "text",
@@ -41,165 +54,367 @@ export function Genres() {
     setPage(page - 1);
   };
 
+  const handleShowCreate = () => {
+    setShowCreate(!showCreate);
+  };
+
+  const handleDeleteGenre = async (id) => {
+    const debouncedGenre = debounce(getListGenre, 1000);
+    try {
+      await dispatch(deleteGenre({ id }));
+      notify("Đang xoá!");
+      debouncedGenre();
+    } catch (error) {
+      console.log(error.message);
+      notify(error.message);
+    }
+  };
+
+  const handleClearOldData = () => {
+    setName("");
+  };
+
+  const handleClickCreateGenre = () => {
+    handleClearOldData();
+    setGenreId("");
+    setShowCreate(!showCreate);
+  };
+
+  const handleCreateGenre = () => {
+    const debouncedGenreCreate = debounce(getListGenre, 1000);
+    if (name.length > 1) {
+      try {
+        setShowCreate(false);
+        dispatch(
+          createGenre({
+            name: name,
+            description: "",
+          })
+        ).then(notify("Đã tạo!"));
+        handleClearOldData();
+        debouncedGenreCreate();
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      setColor("#980303");
+      notify("Vui lòng kiểm tra lại thông tin!");
+    }
+  };
+
+  const handleClickUpdateGenre = (name, id) => {
+    setName(name);
+    setGenreId(id);
+  };
+
+  const handleUpdateGenre = () => {
+    const debouncedGenreUpdate = debounce(getListGenre, 1000);
+    if (name.length > 1 && genreId) {
+      try {
+        setShowCreate(false);
+        dispatch(
+          updateGenre({
+            id: genreId,
+            name: name,
+            description: "",
+          })
+        );
+        notify("Đã cập nhật!");
+        handleClearOldData();
+        debouncedGenreUpdate();
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      setColor("#980303");
+      notify("Vui lòng kiểm tra lại!");
+    }
+  };
+
+  const notify = (content) =>
+    toast(`🦄 ${content}`, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      className: "text-sm font-bold",
+      theme: "light",
+    });
+
+  const getListGenre = () => {
+    let row = "20";
+    dispatch(getGenres({ limit: row, page: page }))
+      .then(unwrapResult)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
-    const getListBook = () => {
-      let row = "20";
-      dispatch(getAuthors({ limit: row, page: page }))
-        .then(unwrapResult)
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    getListBook();
+    getListGenre();
   }, [page]);
 
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
-      <Card>
-        <CardHeader
-          variant="gradient"
-          color="blue"
-          className="mb-8 flex w-full items-center gap-10 p-6"
-        >
-          <Typography variant="h5" color="white">
-            Thể loại
-          </Typography>
-          <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
-            <input
-              type="text"
-              placeholder="Find book"
-              className=" w-3/4 bg-transparent px-2 text-base font-normal text-white"
-              name="search"
-              id="search"
-            />
-            <div className="absolute right-0 flex h-full items-center rounded-r-lg py-2 px-3">
-              <FaSearch className="text-[white]"></FaSearch>
+    <>
+      <ToastContainer
+        toastStyle={{
+          backgroundColor: "#b8fcf6ea",
+          color: color,
+          marginTop: "10vh",
+        }}
+      />
+      <div className="mt-12 mb-8 flex min-h-[100vh] flex-col gap-12">
+        <Card>
+          <CardHeader
+            variant="gradient"
+            color="blue"
+            className="mb-8 flex w-full items-center gap-10 p-6"
+          >
+            <Typography variant="h5" color="white">
+              Thể loại
+            </Typography>
+            <div className="relative flex w-1/2 items-center  rounded-lg border-b-2 border-[white] py-2 px-4 shadow-md">
+              <input
+                type="text"
+                placeholder="Tìm kiếm..."
+                className=" w-3/4 bg-transparent px-2 text-base font-normal text-white"
+                name="search"
+                id="search"
+              />
+              <div className="absolute right-0 flex h-full items-center rounded-r-lg py-2 px-3">
+                <FaSearch className="text-[white]"></FaSearch>
+              </div>
+            </div>
+          </CardHeader>
+          <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+            <div className="flex w-full justify-end">
+              <Tippy content="Tạo mới">
+                <span>
+                  <Button
+                    className="mr-2 rounded-2xl bg-[#0c9dd6] text-white"
+                    onClick={() => {
+                      handleClickCreateGenre();
+                      handleShowCreate();
+                    }}
+                  >
+                    <FaPlus></FaPlus>
+                  </Button>
+                </span>
+              </Tippy>
+            </div>
+            <table className="w-full min-w-[640px] table-auto">
+              <thead>
+                <tr>
+                  {[
+                    "Tên thể loại",
+                    "Ngày tạo",
+                    "Đã xoá",
+                    "Ngày cập nhật",
+                    "",
+                    "",
+                  ].map((el, index) => (
+                    <th
+                      key={index}
+                      className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                    >
+                      <Typography
+                        variant="small"
+                        className="text-[11px] font-bold uppercase text-blue-gray-400"
+                      >
+                        {el}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {genres &&
+                  genres.map((genre, key) => {
+                    const className = `py-3 px-5 ${
+                      key === genres.length - 1
+                        ? ""
+                        : "border-b border-blue-gray-50"
+                    }`;
+
+                    return (
+                      <tr key={genre.id}>
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-semibold"
+                              >
+                                {genre.name}
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {genre?.created_at ?? ""}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Chip
+                            variant="gradient"
+                            color={
+                              genre.is_deleted && genre.is_deleted == false
+                                ? "red"
+                                : "green"
+                            }
+                            value={JSON.stringify(genre.is_deleted)}
+                            className="py-0.5 px-2 text-[11px] font-medium"
+                          />
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {genre.updated_at}
+                          </Typography>
+                        </td>
+                        <td
+                          className={className}
+                          onClick={() => {
+                            handleShowCreate(),
+                              handleClickUpdateGenre(
+                                genre?.name ?? "",
+                                genre?.id ?? ""
+                              );
+                          }}
+                        >
+                          <Tippy content="Sửa">
+                            <span>
+                              <Typography
+                                variant="small"
+                                as="p"
+                                className="flex items-center justify-center text-xs font-semibold text-blue-gray-600"
+                              >
+                                <FaPencilAlt></FaPencilAlt>
+                              </Typography>
+                            </span>
+                          </Tippy>
+                        </td>
+                        <td
+                          className={className}
+                          onClick={() => handleDeleteGenre(genre.id)}
+                        >
+                          <Tippy content="Xoá">
+                            <span>
+                              <Typography
+                                variant="small"
+                                as="p"
+                                className="flex items-center justify-center text-xs font-semibold text-red-400"
+                              >
+                                <FaTrashAlt></FaTrashAlt>
+                              </Typography>
+                            </span>
+                          </Tippy>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </CardBody>
+          <div className="flex items-center justify-end  gap-4">
+            <Button
+              variant="text"
+              color="blue-gray"
+              className="flex items-center gap-2"
+              onClick={prev}
+              disabled={page === 1}
+            >
+              <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
+            </Button>
+            <div className="flex items-center gap-2">
+              <IconButton {...getItemProps(1)}>1</IconButton>
+              <IconButton {...getItemProps(2)}>2</IconButton>
+              <IconButton {...getItemProps(3)}>3</IconButton>
+              <IconButton {...getItemProps(4)}>4</IconButton>
+              <IconButton {...getItemProps(5)}>5</IconButton>
+            </div>
+            <Button
+              variant="text"
+              color="blue-gray"
+              className="flex items-center gap-2"
+              onClick={next}
+              disabled={page === 5}
+            >
+              Next
+              <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
+            </Button>
+          </div>
+        </Card>
+      </div>
+      {genres && showCreate && (
+        <>
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden">
+            <div className=" relative my-6 w-[100vw]">
+              {/*content*/}
+              <div className="relative mx-auto flex w-4/5 flex-col rounded-lg border-0 bg-[#f3fcf9f8] py-12 px-5 shadow-lg xl:w-4/6">
+                {/*header*/}
+                <div className="flex w-full flex-row items-center lg:w-4/5">
+                  <button
+                    className="absolute right-0 top-0 px-2 py-2 text-xl font-bold uppercase text-red-500 lg:px-6"
+                    type="button"
+                    onClick={handleShowCreate}
+                  >
+                    X
+                  </button>
+                </div>
+                {/*body*/}
+                <div className="relative max-h-[70vh] flex-auto overflow-auto md:p-4">
+                  <div className="mx-auto flex max-w-7xl flex-col items-center rounded-lg p-1 sm:flex-row sm:items-start">
+                    <div
+                      className={`w-full rounded-2xl p-1 text-sm shadow-md shadow-[#bedcd7e1] sm:w-2/3 lg:p-5 ${"sm:w-full"}`}
+                    >
+                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                        <img
+                          className="mx-auto transition-transform duration-500 hover:scale-105"
+                          width={200}
+                          src={"/img/logo-ct.png"}
+                          alt={"Author"}
+                        />
+                        <div className="flex items-center p-2">
+                          <Input
+                            onChange={(e) => setName(e.target.value)}
+                            value={name}
+                            type="text"
+                            variant="standard"
+                            label="Tên thể loại"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="pt-9 text-center">
+                          <Button
+                            type={"submit"}
+                            onClick={() =>
+                              genreId
+                                ? handleUpdateGenre()
+                                : handleCreateGenre()
+                            }
+                            className="text-md font-base md:text-md bg-[#0bcaca] p-2 text-white shadow-md shadow-[#5f5e5eb5] hover:shadow-none"
+                          >
+                            <p>Xác nhận</p>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </CardHeader>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <table className="w-full min-w-[640px] table-auto">
-            <thead>
-              <tr>
-                {[
-                  "Tên tasc giả",
-                  "Ngày tạo",
-                  "is deleted",
-                  "Ngày cập nhật",
-                  "",
-                ].map((el) => (
-                  <th
-                    key={el}
-                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
-                  >
-                    <Typography
-                      variant="small"
-                      className="text-[11px] font-bold uppercase text-blue-gray-400"
-                    >
-                      {el}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {authors &&
-                authors.map((author, key) => {
-                  const className = `py-3 px-5 ${
-                    key === authors.length - 1
-                      ? ""
-                      : "border-b border-blue-gray-50"
-                  }`;
-
-                  return (
-                    <tr key={author.id}>
-                      <td className={className}>
-                        <div className="flex items-center gap-4">
-                          {author?.images && (
-                            <Avatar
-                              src={author?.images ?? ""}
-                              alt={author.name}
-                              size="sm"
-                            />
-                          )}
-                          <div>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-semibold"
-                            >
-                              {author.name}
-                            </Typography>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {author?.created_at ?? ""}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={
-                            author.is_deleted && author.is_deleted == false
-                              ? "red"
-                              : "green"
-                          }
-                          value={JSON.stringify(author.is_deleted)}
-                          className="py-0.5 px-2 text-[11px] font-medium"
-                        />
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {author.updated_at}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
-                        >
-                          Edit
-                        </Typography>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </CardBody>
-        <div className="flex items-center justify-end  gap-4">
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center gap-2"
-            onClick={prev}
-            disabled={page === 1}
-          >
-            <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
-          </Button>
-          <div className="flex items-center gap-2">
-            <IconButton {...getItemProps(1)}>1</IconButton>
-            <IconButton {...getItemProps(2)}>2</IconButton>
-            <IconButton {...getItemProps(3)}>3</IconButton>
-            <IconButton {...getItemProps(4)}>4</IconButton>
-            <IconButton {...getItemProps(5)}>5</IconButton>
-          </div>
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center gap-2"
-            onClick={next}
-            disabled={page === 5}
-          >
-            Next
-            <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
-          </Button>
-        </div>
-      </Card>
-    </div>
+          <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+        </>
+      )}
+    </>
   );
 }
 

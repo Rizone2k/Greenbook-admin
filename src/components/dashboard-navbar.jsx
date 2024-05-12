@@ -26,11 +26,16 @@ import {
   setOpenConfigurator,
   setOpenSidenav,
 } from "@/context";
+import { useSelector } from "react-redux";
+import { currentUserSelector } from "@/redux/selectors";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
   const { pathname } = useLocation();
+  const currentUser = useSelector(currentUserSelector);
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
 
   return (
@@ -46,21 +51,17 @@ export function DashboardNavbar() {
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
         <div className="relative capitalize">
-          <div className=" relative flex items-center  rounded-lg bg-white py-2 px-4 shadow-md shadow-[#9594945b]">
-            <input
-              type="text"
-              placeholder="search.."
-              className="bg-transparent px-2 text-base font-normal text-black"
-              name="search"
-              id="search"
-            />
-            <div className="absolute right-0 flex h-full items-center rounded-r-lg bg-[#3e444a] py-2 px-3">
-              <FaSearch className="text-[white]"></FaSearch>
-            </div>
-          </div>
+          <div className=" relative flex items-center rounded-lg bg-transparent py-2 px-4"></div>
         </div>
         <div className="flex items-center">
-          <div className="mr-auto md:mr-4 md:w-56"></div>
+          <IconButton
+            variant="text"
+            color="blue-gray"
+            className="grid xl:hidden"
+            onClick={() => setOpenSidenav(dispatch, !openSidenav)}
+          >
+            <Bars3Icon strokeWidth={3} className="h-6 w-6 text-white" />
+          </IconButton>
 
           <IconButton
             variant="text"

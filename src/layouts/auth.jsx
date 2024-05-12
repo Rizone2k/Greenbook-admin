@@ -1,37 +1,9 @@
-import { Routes, Route } from "react-router-dom";
-import {
-  ChartPieIcon,
-  UserIcon,
-  UserPlusIcon,
-  ArrowRightOnRectangleIcon,
-} from "@heroicons/react/24/solid";
-import { Navbar, Footer } from "@/components";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Footer } from "@/components";
 import routes from "@/routes/routes";
-
 export function Auth() {
-  const navbarRoutes = [
-    {
-      name: "dashboard",
-      path: "/dashboard/home",
-      icon: ChartPieIcon,
-    },
-    {
-      name: "profile",
-      path: "/dashboard/home",
-      icon: UserIcon,
-    },
-    {
-      name: "sign in",
-      path: "/auth/sign-in",
-      icon: ArrowRightOnRectangleIcon,
-    },
-  ];
-
   return (
     <div className="relative min-h-screen w-full">
-      <div className="container relative z-40 mx-auto p-4">
-        <Navbar routes={navbarRoutes} />
-      </div>
       <Routes>
         {routes.map(
           ({ layout, pages }) =>
@@ -40,6 +12,7 @@ export function Auth() {
               <Route exact path={path} element={element} />
             ))
         )}
+        <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
       </Routes>
       <div className="container absolute bottom-8 left-2/4 z-10 mx-auto -translate-x-2/4 text-white">
         <Footer />

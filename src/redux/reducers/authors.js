@@ -34,4 +34,50 @@ export const getAuthors = createAsyncThunk(
   }
 );
 
+export const createAuthor = createAsyncThunk(
+  "books/createAuthor",
+  async ({ name = "", image = "" }) => {
+    try {
+      const res = await greenBookAPI.createAuthor(name, image);
+      console.log(res.data);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const updateAuthor = createAsyncThunk(
+  "books/updateAuthor",
+  async ({ id = "", name = "", image = "" }) => {
+    try {
+      const res = await greenBookAPI.updateAuthor(id, name, image);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const deleteAuthor = createAsyncThunk(
+  "books/deleteAuthor",
+  async ({ id }) => {
+    try {
+      const res = await greenBookAPI.deleteAuthor(id);
+      if (res.status === 200) {
+        const result = res.data;
+        return result.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 export default authorsSlice;
